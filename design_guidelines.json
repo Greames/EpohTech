@@ -1,0 +1,180 @@
+{
+  "project_name": "SECOND SALARY CAPITAL",
+  "brand_identity": {
+    "tagline": "It Started With Our Second Salary.",
+    "positioning": "A premier venture-studio and company-building platform bringing together ambitious founders, strategic capital investors, deep technology execution (via EPOHTECH), and real market intelligence.",
+    "origin_story": "Our founders gave their first salaries to their parents and God as a mark of gratitude. With their second salaries, they took the leap and built their first startup. Now, Second Salary Capital empowers the next generation of builders with capital, tech execution, and scaling ecosystems.",
+    "emotional_archetype": "Architectural Luxury & Performance Pro (High-contrast obsidian, warm bronze/champagne amber accents, refined Swiss kinetic typography, investment-grade authority)"
+  },
+  "theme": {
+    "mode": "dark_primary_with_light_accents",
+    "background_dark": "#0B0C0E",
+    "background_card": "#13151A",
+    "background_elevated": "#1A1D24",
+    "text_primary": "#F4F5F7",
+    "text_secondary": "#9CA3AF",
+    "accent_primary": "#E6C280",
+    "accent_glow": "#F5D796",
+    "accent_secondary": "#10B981",
+    "border_subtle": "rgba(255, 255, 255, 0.08)",
+    "border_highlight": "rgba(230, 194, 128, 0.3)"
+  },
+  "typography": {
+    "heading_font": "Outfit or Plus Jakarta Sans (Sans-serif display with high-contrast geometric character)",
+    "body_font": "Inter or Plus Jakarta Sans",
+    "mono_font": "JetBrains Mono (for numbers, metrics, tags, and technical specs)",
+    "h1_hero": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]",
+    "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white",
+    "h3_sub": "text-xl sm:text-2xl font-semibold tracking-normal text-slate-100",
+    "eyebrow_label": "text-xs font-mono uppercase tracking-[0.25em] text-[#E6C280]",
+    "body_text": "text-base text-gray-300 leading-relaxed",
+    "small_caption": "text-sm text-gray-400"
+  },
+  "color_palette": {
+    "obsidian_bg": "#0B0C0E",
+    "charcoal_surface": "#13151A",
+    "card_border": "#222630",
+    "champagne_gold": "#E6C280",
+    "champagne_gold_hover": "#F5D796",
+    "emerald_growth": "#10B981",
+    "off_white": "#F4F5F7",
+    "muted_slate": "#64748B",
+    "epohtech_purple_accent": "#8B5CF6"
+  },
+  "layout_and_spacing": {
+    "container_max": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "section_padding": "py-20 md:py-32",
+    "card_padding": "p-6 sm:p-8 lg:p-10",
+    "gap_system": "gap-6 md:gap-8 lg:gap-12",
+    "bento_grid": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6",
+    "hero_layout": "relative overflow-hidden pt-32 pb-24 md:pt-40 md:pb-36 flex flex-col items-center text-center justify-center min-h-[90vh]"
+  },
+  "motion_and_craft": {
+    "lenis_smooth_scroll": "MANDATORY for silky editorial momentum",
+    "hero_reveal": "Line-by-line masked text animation with framer-motion stagger Children",
+    "counters": "Animated metric numbers with smooth count-up logic using framer-motion animate() or standard count-up component",
+    "marquee": "Single slow editorial scrolling marquee for support ecosystem keywords & partners",
+    "card_hover": "Glassmorphic elevation, border glow transition border-[#E6C280]/40, light hover lift scale-102",
+    "parallax_bg": "Subtle particle or glowing radial mesh canvas in hero background"
+  },
+  "image_urls": {
+    "hero_venture_ambience": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHxmb3VuZGVyJTIwd29ya2luZyUyMHN0YXJ0dXAlMjB0ZWNobm9sb2d5JTIwb2ZmaWNlfGVufDB8fHx8MTc4OTk4MzE3OXww&ixlib=rb-4.1.0&q=85",
+    "startup_collaboration": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHw0fHxmb3VuZGVyJTIwd29ya2luZyUyMHN0YXJ0dXAlMjB0ZWNobm9sb2d5JTIwb2ZmaWNlfGVufDB8fHx8MTc4OTk4MzE3OXww&ixlib=rb-4.1.0&q=85",
+    "boardroom_investors": "https://images.unsplash.com/photo-1573167507387-6b4b98cb7c13?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTJ8MHwxfHNlYXJjaHw3fHx2ZW50dXJlJTIwY2FwaXRhbCUyMGludmVzdG9yJTIwbWVldGluZyUyMGJvYXJkJTIwcm9vbXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85",
+    "investor_meeting_2": "https://images.unsplash.com/photo-1582653291997-079a1c04e5a1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTJ8MHwxfHNlYXJjaHw0fHx2ZW50dXJlJTIwY2FwaXRhbCUyMGludmVzdG9yJTIwbWVldGluZyUyMGJvYXJkJTIwcm9vbXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85",
+    "epohtech_code_architecture": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHx0ZWNoJTIwc29mdHdhcmUlMjBlbmdpbmVlciUyMGNvZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85",
+    "epohtech_developer": "https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwyfHx0ZWNoJTIwc29mdHdhcmUlMjBlbmdpbmVlciUyMGNvZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85"
+  },
+  "pages_and_navigation": {
+    "header_nav_items": [
+      { "label": "Home", "path": "/" },
+      { "label": "Build With Us", "path": "/build" },
+      { "label": "For Investors", "path": "/investors" },
+      { "label": "What We Support", "path": "/support" },
+      { "label": "EPOHTECH", "path": "/epohtech" },
+      { "label": "Our Story", "path": "/story" },
+      { "label": "Insights", "path": "/insights" },
+      { "label": "Contact", "path": "/contact" }
+    ],
+    "header_ctas": [
+      { "label": "Apply as Founder", "path": "/build", "variant": "primary" },
+      { "label": "Join as Investor", "path": "/investors", "variant": "outline" }
+    ]
+  },
+  "key_components_to_build": [
+    {
+      "name": "HeaderNav",
+      "description": "Sticky glassmorphism navigation header with backdrop blur, logo, 8 nav links, Google sign-in modal integration, CTA buttons, mobile drawer.",
+      "path": "src/components/HeaderNav.js"
+    },
+    {
+      "name": "KineticHero",
+      "description": "Signature hero section with masked line-by-line text reveal, badge, background glow, and main CTAs (BUILD WITH US / INVEST WITH US).",
+      "path": "src/components/KineticHero.js"
+    },
+    {
+      "name": "HeroMetricCounters",
+      "description": "Animated number counters showcasing 80+ Investors Onboarded, 2+ Startups Funded, ₹10L–₹10Cr Investment Range.",
+      "path": "src/components/HeroMetricCounters.js"
+    },
+    {
+      "name": "OriginStoryTimeline",
+      "description": "Editorial 4-chapter timeline: First Salary → Gratitude to Parents & God → Second Salary → Building Ventures.",
+      "path": "src/components/OriginStoryTimeline.js"
+    },
+    {
+      "name": "WhatWeDoGrid",
+      "description": "4 pillars (Idea Validation, Founders Matching, Strategic Capital, Tech Build) bento grid.",
+      "path": "src/components/WhatWeDoGrid.js"
+    },
+    {
+      "name": "SupportEcosystemGrid",
+      "description": "13 structured support cards covering Legal, Tech, AI, Growth, Capital, Hiring, Product, Strategy, Architecture, PR, Compliance, Mentorship, Global Scale.",
+      "path": "src/components/SupportEcosystemGrid.js"
+    },
+    {
+      "name": "EditorialMarquee",
+      "description": "Slow luxury drifting marquee with key studio mantras and ecosystem tags.",
+      "path": "src/components/EditorialMarquee.js"
+    },
+    {
+      "name": "EpohTechSection",
+      "description": "Dedicated section on home + full dedicated page showcasing tech partner EPOHTECH (Architecture, Full-stack, AI engines, Cloud infrastructure).",
+      "path": "src/components/EpohTechSection.js"
+    },
+    {
+      "name": "FounderApplicationForm",
+      "description": "Multi-step interactive form for founders to submit pitch deck, idea details, funding stage, contact details, and tech needs.",
+      "path": "src/components/FounderApplicationForm.js"
+    },
+    {
+      "name": "InvestorRegistrationForm",
+      "description": "Accredited investor application form (check size, ticket size preference, thesis, location, contact info).",
+      "path": "src/components/InvestorRegistrationForm.js"
+    },
+    {
+      "name": "InsightsSection",
+      "description": "'Inside the Build' articles & tech essays with interactive filters, search, and reading modal.",
+      "path": "src/components/InsightsSection.js"
+    },
+    {
+      "name": "GoogleAuthModal",
+      "description": "Google authentication overlay for founder/investor login with Sonner toast confirmation.",
+      "path": "src/components/GoogleAuthModal.js"
+    },
+    {
+      "name": "Footer",
+      "description": "Dark architectural footer with newsletter signup, site links, copyright, and brand story excerpt.",
+      "path": "src/components/Footer.js"
+    }
+  ],
+  "testing_and_accessibility": {
+    "data_testid_requirement": "All interactive elements, buttons, inputs, links, tabs, modals, card actions MUST include explicit kebab-case data-testid attributes (e.g. data-testid='apply-founder-button', data-testid='investor-check-size-select', data-testid='nav-link-epohtech').",
+    "apca_contrast": "Ensure pure off-white #F4F5F7 text on #0B0C0E dark backgrounds exceeds 4.5:1 contrast ratio. Interactive buttons have explicit hover colors."
+  },
+  "instructions_to_main_agent": [
+    "Use JavaScript (.js / .jsx) files throughout the codebase since the project uses JS React template.",
+    "Implement Lenis smooth scrolling or Framer Motion scroll listeners for silky motion.",
+    "Do NOT use pure #000000; use #0B0C0E obsidian background with #13151A cards and #E6C280 champagne accent.",
+    "Ensure header nav has glassmorphism with backdrop-blur-xl bg-[#0B0C0E]/80 and explicit z-50.",
+    "Include full Google Sign-in simulation with toast notifications via Sonner.",
+    "Populate real content for all 13 support cards, 80+ investors metric, ₹10L–₹10Cr range, and EPOHTECH specs.",
+    "Add data-testid to every single button, link, form input, tab, card, and interactive component.",
+    "Support full routing for all 8 nav pages: Home, Build With Us, For Investors, What We Support, EPOHTECH, Our Story, Insights, Contact."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic outputs. In frontend design, this creates what users call AI slop. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition (e.g., transition: all). This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons. Use lucide-react icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, custom selection states, and loading animations: separates good from extraordinary.",
+    "All interactive and key informational elements MUST include data-testid attribute."
+  ]
+}

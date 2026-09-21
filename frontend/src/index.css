@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 225 12% 5%;
+        --foreground: 210 20% 96%;
+        --card: 223 16% 9%;
+        --card-foreground: 210 20% 96%;
+        --popover: 223 16% 9%;
+        --popover-foreground: 210 20% 96%;
+        --primary: 38 68% 70%;
+        --primary-foreground: 225 12% 5%;
+        --secondary: 220 12% 13%;
+        --secondary-foreground: 210 20% 96%;
+        --muted: 220 12% 13%;
+        --muted-foreground: 215 14% 60%;
+        --accent: 38 68% 70%;
+        --accent-foreground: 225 12% 5%;
+        --destructive: 0 72% 55%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 220 10% 16%;
+        --input: 220 10% 18%;
+        --ring: 38 68% 70%;
+        --radius: 0.75rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    html {
+        scroll-behavior: auto;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+    }
+    ::selection {
+        background: #E6C280;
+        color: #0B0C0E;
+    }
+}
+
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+
+    [data-debug-wrapper="true"] > * {
+        margin-left: inherit;
+        margin-right: inherit;
+        margin-top: inherit;
+        margin-bottom: inherit;
+        padding-left: inherit;
+        padding-right: inherit;
+        padding-top: inherit;
+        padding-bottom: inherit;
+        column-gap: inherit;
+        row-gap: inherit;
+        gap: inherit;
+        border-left-width: inherit;
+        border-right-width: inherit;
+        border-top-width: inherit;
+        border-bottom-width: inherit;
+        border-left-style: inherit;
+        border-right-style: inherit;
+        border-top-style: inherit;
+        border-bottom-style: inherit;
+        border-top-color: inherit;
+        border-right-color: inherit;
+        border-bottom-color: inherit;
+        border-left-color: inherit;
+    }
+}
+
+.font-mono,
+code {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+.grain-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes marquee-drift {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    animation: marquee-drift 48s linear infinite;
+}
+
+@keyframes hero-grid-pan {
+    from { background-position: 0 0; }
+    to { background-position: 80px 80px; }
+}
+
+.hero-grid {
+    background-image:
+        linear-gradient(rgba(230, 194, 128, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(230, 194, 128, 0.05) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: hero-grid-pan 24s linear infinite;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 75%);
+}
+
+.text-outline {
+    -webkit-text-stroke: 1px rgba(230, 194, 128, 0.35);
+    color: transparent;
+}
+
+.gold-glow {
+    box-shadow: 0 0 60px -12px rgba(230, 194, 128, 0.35);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #0B0C0E;
+}
+::-webkit-scrollbar-thumb {
+    background: #222630;
+    border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #E6C280;
+}
