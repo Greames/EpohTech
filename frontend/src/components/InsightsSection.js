@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import axios, { API } from "@/lib/api";
 import { Reveal, Eyebrow } from "@/components/Reveal";
 
 export const ARTICLES = [
@@ -54,12 +55,21 @@ export const ARTICLES = [
   },
 ];
 
-const CATEGORIES = ["All", ...Array.from(new Set(ARTICLES.map((a) => a.category)))];
-
 export default function InsightsSection() {
   const [cat, setCat] = useState("All");
   const [open, setOpen] = useState(null);
-  const list = cat === "All" ? ARTICLES : ARTICLES.filter((a) => a.category === cat);
+  const [remote, setRemote] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`${API}/insights`)
+      .then((r) => setRemote(r.data.insights || []))
+      .catch(() => setRemote([]));
+  }, []);
+
+  const source = remote && remote.length ? remote : ARTICLES;
+  const CATEGORIES = ["All", ...Array.from(new Set(source.map((a) => a.category)))];
+  const list = cat === "All" ? source : source.filter((a) => a.category === cat);
 
   return (
     <section data-testid="insights-section" className="py-24 md:py-36 border-t border-white/5">

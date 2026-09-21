@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, UploadFile, File
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -16,6 +16,7 @@ from html import escape
 from html.parser import HTMLParser
 from urllib.parse import urlparse
 import httpx
+import requests
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -35,6 +36,44 @@ EMAIL_KEY = os.environ.get("EMERGENT_EMAIL_KEY")
 EMAIL_FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "Second Salary Capital")
 EMAIL_REPLY_TO = os.environ.get("EMAIL_REPLY_TO")
 OWNER_NOTIFY_EMAIL = os.environ.get("OWNER_NOTIFY_EMAIL") or None
+
+# ---------------- Admin ----------------
+ADMIN_EMAILS = {e.strip().lower() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()}
+
+# ---------------- Object storage (Emergent) ----------------
+STORAGE_BASE = (os.environ.get("INTEGRATION_PROXY_URL") or "").strip() or "https://integrations.emergentagent.com"
+STORAGE_URL = STORAGE_BASE.rstrip("/") + "/objstore/api/v1/storage"
+EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY")
+APP_NAME = "second-salary-capital"
+storage_key = None
+
+
+def init_storage(force: bool = False):
+    global storage_key
+    if storage_key and not force:
+        return storage_key
+    resp = requests.post(f"{STORAGE_URL}/init", json={"emergent_key": EMERGENT_KEY}, timeout=30)
+    resp.raise_for_status()
+    storage_key = resp.json()["storage_key"]
+    return storage_key
+
+
+def put_object(path: str, data: bytes, content_type: str) -> dict:
+    key = init_storage()
+    resp = requests.put(
+        f"{STORAGE_URL}/objects/{path}",
+        headers={"X-Storage-Key": key, "Content-Type": content_type},
+        data=data, timeout=120,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+
+def get_object(path: str):
+    key = init_storage()
+    resp = requests.get(f"{STORAGE_URL}/objects/{path}", headers={"X-Storage-Key": key}, timeout=60)
+    resp.raise_for_status()
+    return resp.content, resp.headers.get("Content-Type", "application/octet-stream")
 
 _SHORTENERS = ("bit.ly", "tinyurl.com", "t.co", "is.gd", "cutt.ly", "goo.gl", "rebrand.ly")
 _CRED_ASK = ("reply with your password", "reply with the code", "send your password", "cvv",
@@ -461,6 +500,250 @@ async def my_activity(request: Request):
         "founder_applications": founder_apps,
         "investor_registrations": investor_regs,
     }
+
+
+# ---------------- Admin & platform models ----------------
+FOUNDER_STATUSES = {"submitted", "screening", "shortlisted", "discovery", "validation", "founder_review", "approved", "rejected"}
+INVESTOR_STATUSES = {"verification_pending", "verified", "approved", "rejected"}
+ALLOWED_DECK_EXT = {"pdf", "ppt", "pptx", "doc", "docx"}
+MAX_DECK_SIZE = 15 * 1024 * 1024
+
+
+class StatusUpdate(BaseModel):
+    status: str
+
+
+class InsightIn(BaseModel):
+    title: str
+    category: Optional[str] = "Company Building"
+    read: Optional[str] = "4 min"
+    excerpt: Optional[str] = ""
+    body: Optional[str] = ""
+    published: bool = True
+
+
+async def require_admin(request: Request):
+    user = await get_current_user(request)
+    if user["email"].lower() not in ADMIN_EMAILS:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+
+# ---------------- Public insights ----------------
+@api_router.get("/insights")
+async def list_insights():
+    items = await db.insights.find({"published": True}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return {"insights": items}
+
+
+# ---------------- Pitch deck upload ----------------
+@api_router.post("/applications/founder/{application_id}/deck")
+async def upload_deck(application_id: str, file: UploadFile = File(...)):
+    app_doc = await db.founder_applications.find_one({"application_id": application_id}, {"_id": 0})
+    if not app_doc:
+        raise HTTPException(status_code=404, detail="Application not found")
+    if app_doc.get("deck_file_id"):
+        raise HTTPException(status_code=409, detail="A deck is already attached to this application")
+    ext = (file.filename or "").rsplit(".", 1)[-1].lower() if "." in (file.filename or "") else ""
+    if ext not in ALLOWED_DECK_EXT:
+        raise HTTPException(status_code=400, detail="Only PDF, PPT, PPTX, DOC or DOCX files are allowed")
+    data = await file.read()
+    if not data:
+        raise HTTPException(status_code=400, detail="Empty file")
+    if len(data) > MAX_DECK_SIZE:
+        raise HTTPException(status_code=400, detail="File too large (max 15MB)")
+    path = f"{APP_NAME}/decks/{application_id}/{uuid.uuid4().hex}.{ext}"
+    try:
+        result = await asyncio.to_thread(put_object, path, data, file.content_type or "application/octet-stream")
+    except Exception as e:
+        logger.error(f"Deck upload failed: {e}")
+        raise HTTPException(status_code=502, detail="File storage unavailable")
+    file_id = f"file_{uuid.uuid4().hex[:12]}"
+    await db.files.insert_one({
+        "file_id": file_id,
+        "storage_path": result["path"],
+        "original_filename": file.filename,
+        "content_type": file.content_type,
+        "size": result["size"],
+        "is_deleted": False,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    await db.founder_applications.update_one(
+        {"application_id": application_id},
+        {"$set": {"deck_file_id": file_id, "deck_filename": file.filename}},
+    )
+    return {"status": "success", "file_id": file_id, "filename": file.filename}
+
+
+# ---------------- Admin endpoints ----------------
+@api_router.get("/admin/overview")
+async def admin_overview(request: Request):
+    await require_admin(request)
+    return {
+        "founder_applications": await db.founder_applications.count_documents({}),
+        "investor_registrations": await db.investor_registrations.count_documents({}),
+        "contact_messages": await db.contact_messages.count_documents({}),
+        "insights": await db.insights.count_documents({}),
+        "users": await db.users.count_documents({}),
+        "files": await db.files.count_documents({"is_deleted": False}),
+    }
+
+
+@api_router.get("/admin/founder-applications")
+async def admin_founder_applications(request: Request):
+    await require_admin(request)
+    items = await db.founder_applications.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    return {"applications": items}
+
+
+@api_router.patch("/admin/founder-applications/{application_id}")
+async def admin_update_founder_status(application_id: str, payload: StatusUpdate, request: Request):
+    await require_admin(request)
+    if payload.status not in FOUNDER_STATUSES:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    res = await db.founder_applications.update_one(
+        {"application_id": application_id}, {"$set": {"status": payload.status}}
+    )
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Application not found")
+    return {"status": "success", "application_id": application_id, "new_status": payload.status}
+
+
+@api_router.get("/admin/investor-registrations")
+async def admin_investor_registrations(request: Request):
+    await require_admin(request)
+    items = await db.investor_registrations.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    return {"registrations": items}
+
+
+@api_router.patch("/admin/investor-registrations/{registration_id}")
+async def admin_update_investor_status(registration_id: str, payload: StatusUpdate, request: Request):
+    await require_admin(request)
+    if payload.status not in INVESTOR_STATUSES:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    res = await db.investor_registrations.update_one(
+        {"registration_id": registration_id}, {"$set": {"status": payload.status}}
+    )
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Registration not found")
+    return {"status": "success", "registration_id": registration_id, "new_status": payload.status}
+
+
+@api_router.get("/admin/contacts")
+async def admin_contacts(request: Request):
+    await require_admin(request)
+    items = await db.contact_messages.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    return {"messages": items}
+
+
+@api_router.get("/admin/insights")
+async def admin_list_insights(request: Request):
+    await require_admin(request)
+    items = await db.insights.find({}, {"_id": 0}).sort("created_at", -1).to_list(200)
+    return {"insights": items}
+
+
+@api_router.post("/admin/insights")
+async def admin_create_insight(payload: InsightIn, request: Request):
+    await require_admin(request)
+    slug = re.sub(r"[^a-z0-9]+", "-", payload.title.lower()).strip("-") or uuid.uuid4().hex[:8]
+    if await db.insights.find_one({"slug": slug}):
+        slug = f"{slug}-{uuid.uuid4().hex[:4]}"
+    doc = payload.model_dump()
+    doc.update({
+        "insight_id": f"in_{uuid.uuid4().hex[:12]}",
+        "slug": slug,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    await db.insights.insert_one(dict(doc))
+    return {k: v for k, v in doc.items()}
+
+
+@api_router.put("/admin/insights/{insight_id}")
+async def admin_update_insight(insight_id: str, payload: InsightIn, request: Request):
+    await require_admin(request)
+    res = await db.insights.update_one({"insight_id": insight_id}, {"$set": payload.model_dump()})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Insight not found")
+    doc = await db.insights.find_one({"insight_id": insight_id}, {"_id": 0})
+    return doc
+
+
+@api_router.delete("/admin/insights/{insight_id}")
+async def admin_delete_insight(insight_id: str, request: Request):
+    await require_admin(request)
+    res = await db.insights.delete_one({"insight_id": insight_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Insight not found")
+    return {"status": "success"}
+
+
+@api_router.get("/admin/files/{file_id}/download")
+async def admin_download_file(file_id: str, request: Request):
+    await require_admin(request)
+    record = await db.files.find_one({"file_id": file_id, "is_deleted": False}, {"_id": 0})
+    if not record:
+        raise HTTPException(status_code=404, detail="File not found")
+    try:
+        data, content_type = await asyncio.to_thread(get_object, record["storage_path"])
+    except Exception as e:
+        logger.error(f"File download failed: {e}")
+        raise HTTPException(status_code=502, detail="File storage unavailable")
+    return Response(
+        content=data,
+        media_type=record.get("content_type") or content_type,
+        headers={"Content-Disposition": f'attachment; filename="{record["original_filename"]}"'},
+    )
+
+
+SEED_INSIGHTS = [
+    {
+        "slug": "why-second-salary", "category": "Origin Story", "title": "Why Second Salary?", "read": "4 min",
+        "excerpt": "The name is not about a second income. It is the true story of two salaries, gratitude, and a leap into company building.",
+        "body": "After college, our founders took their first jobs like everyone else. The first salary went to their parents and to God — gratitude before ambition. The second salary went somewhere unusual: it became seed capital for their own company. That decision, made with one month's pay, is the entire philosophy of Second Salary Capital. You do not need permission, inheritance or a fund behind you to start building. You need conviction and one month's courage. We built this studio so that the next founder gets more than a month's salary behind their leap — they get capital, technology, and a full operating ecosystem.",
+    },
+    {
+        "slug": "how-we-evaluate", "category": "Investment Education", "title": "How We Evaluate Opportunities", "read": "6 min",
+        "excerpt": "Market size, founder fit, unit economics and timing — the four questions every venture must answer before capital moves.",
+        "body": "Before a single rupee moves, every proposed company passes through defined stages: idea, screen, market research, validation, founder match, business model and capital planning. We ask four questions. Is the market real and measurable? Is the founder the right person — with domain expertise and full-time commitment? Do the unit economics work at small scale before they work at big scale? And why is now the right time? Most ideas fail one of these. That is the point of a studio: kill weak ideas cheaply, and pour shared resources into the ones that survive.",
+    },
+    {
+        "slug": "build-in-public-validation", "category": "Company Building", "title": "What We Learned Validating Ventures", "read": "5 min",
+        "excerpt": "Customer conversations beat spreadsheets. Lessons from taking ideas through our validation process.",
+        "body": "Every venture in our pipeline goes through structured validation: customer interviews, competitor teardown, pricing tests and market sizing from the bottom up. The consistent lesson: founders fall in love with solutions, but markets only pay for problems. Our validation stage forces the problem first — who hurts, how much, and what they already pay to make it stop. When we cannot find the pain, we do not build. When we find it and the founder can reach it, we move fast: capital, technology and business support arrive together, not sequentially.",
+    },
+    {
+        "slug": "ai-traditional-business", "category": "Technology", "title": "How AI Changes Traditional Businesses", "read": "5 min",
+        "excerpt": "Automation is not about replacing people — it is about letting a five-person venture operate like a fifty-person company.",
+        "body": "Through EPOHTECH, every venture in our ecosystem gets access to applied AI and automation from day one. The biggest gains are unglamorous: automated follow-ups in sales, intelligent document processing in operations, forecasting in finance, and support systems that answer before a human wakes up. A traditional business with modern tooling does not just move faster — it compounds. Data from every process feeds the next decision. That is the technology dividend we build into every company we create.",
+    },
+    {
+        "slug": "what-we-look-for-founders", "category": "Founder Stories", "title": "What We Look For in a Founder", "read": "4 min",
+        "excerpt": "Domain depth, full-time commitment and coachability matter more than a polished pitch deck.",
+        "body": "We have reviewed founders with beautiful decks and no customers, and founders with grease on their hands and a waiting list. We choose the second kind. What we look for: real domain expertise earned inside an industry, the willingness to go full-time, the humility to be challenged during validation, and the stamina for a multi-year build. Equity in our ventures is not a fixed formula — it reflects what the founder brings: idea, experience, customers, capital and commitment. Bring more, own more.",
+    },
+    {
+        "slug": "inside-the-ecosystem", "category": "Behind the Scenes", "title": "Inside the Second Salary Ecosystem", "read": "7 min",
+        "excerpt": "How founders, investors, EPOHTECH and our operating team fit together to build companies repeatedly.",
+        "body": "Second Salary Capital sits at the centre of four forces. Founders bring leadership and execution. Investors — 80+ onboarded today — bring capital and strategic support. EPOHTECH brings technology: software, AI, cloud, ERP and IT operations. And the studio itself brings the operating framework: market research, strategy, legal and CA coordination, marketing, recruitment and business development. Every venture draws from all four. That is what makes it a studio rather than a fund — we do not write cheques and wait. We build, launch, grow, and stay in the trenches through scale and, eventually, liquidity.",
+    },
+]
+
+
+@app.on_event("startup")
+async def startup_event():
+    try:
+        await asyncio.to_thread(init_storage)
+        logger.info("Object storage initialized")
+    except Exception as e:
+        logger.error(f"Storage init failed: {e}")
+    if await db.insights.count_documents({}) == 0:
+        now = datetime.now(timezone.utc).isoformat()
+        await db.insights.insert_many([
+            {**a, "insight_id": f"in_{uuid.uuid4().hex[:12]}", "published": True, "created_at": now}
+            for a in SEED_INSIGHTS
+        ])
+        logger.info("Seeded insights articles")
 
 
 app.include_router(api_router)

@@ -45,6 +45,7 @@ const SectionTitle = ({ n, children }) => (
 
 export default function FounderApplicationForm() {
   const [form, setForm] = useState(INITIAL);
+  const [deck, setDeck] = useState(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(null);
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -54,6 +55,17 @@ export default function FounderApplicationForm() {
     setLoading(true);
     try {
       const r = await axios.post(`${API}/applications/founder`, form);
+      if (deck) {
+        try {
+          const fd = new FormData();
+          fd.append("file", deck);
+          await axios.post(`${API}/applications/founder/${r.data.application_id}/deck`, fd, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+        } catch (deckErr) {
+          toast.warning("Application saved, but the deck upload failed — you can email it to us instead.");
+        }
+      }
       setDone(r.data);
       toast.success("Application submitted — check your inbox for confirmation.");
     } catch (err) {
@@ -123,7 +135,19 @@ export default function FounderApplicationForm() {
         <Field label="Capital Required" name="capital_required" options={["Below ₹10L", "₹10L – ₹50L", "₹50L – ₹2Cr", "₹2Cr – ₹10Cr", "Above ₹10Cr"]} form={form} onChange={onChange} testId="founder-input-capital-required" />
         <Field label="Capital Already Invested" name="capital_invested" placeholder="e.g. ₹5L of savings" form={form} onChange={onChange} testId="founder-input-capital-invested" />
         <Field label="Full-Time Availability" name="full_time" options={["Yes — immediately", "Within 3 months", "Part-time for now"]} form={form} onChange={onChange} testId="founder-input-full-time" />
-        <Field label="Pitch Deck / Attachment Link" name="deck_link" placeholder="Drive / DocSend link" form={form} onChange={onChange} testId="founder-input-deck-link" />
+        <Field label="Pitch Deck Link" name="deck_link" placeholder="Drive / DocSend link (optional)" form={form} onChange={onChange} testId="founder-input-deck-link" />
+        <div>
+          <span className={labelCls}>Or Upload Pitch Deck</span>
+          <label
+            htmlFor="deck_file"
+            data-testid="founder-input-deck-file-label"
+            className="flex items-center gap-3 rounded-xl border border-dashed border-white/15 bg-obsidian/70 px-4 py-3.5 text-sm text-gray-500 hover:border-champagne/50 hover:text-gray-300 cursor-pointer transition-colors duration-300"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E6C280" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span className="truncate">{deck ? `${deck.name} · ${(deck.size / 1048576).toFixed(1)} MB` : "PDF, PPT or DOC — max 15MB"}</span>
+          </label>
+          <input id="deck_file" type="file" accept=".pdf,.ppt,.pptx,.doc,.docx" onChange={(e) => setDeck(e.target.files?.[0] || null)} data-testid="founder-input-deck-file" className="hidden" />
+        </div>
       </div>
       <Field label="Why do you want to build this?" name="why_build" textarea placeholder="The honest version." form={form} onChange={onChange} testId="founder-input-why-build" />
 

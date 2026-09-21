@@ -40,19 +40,28 @@ mobile-first. Integrations: Emergent-managed Google sign-in, Resend transactiona
 - /api/auth/me + /api/my/activity with bearer token; 401 unauthenticated.
 - Browser: hero, metrics counters, founder form submit → success panel + toast; /account with session cookie renders user.
 
+## Implemented (2026-09-21, round 2)
+- Team notifications: OWNER_NOTIFY_EMAIL=tulasi.reddy@theepoh.com — every founder application,
+  investor registration and contact message emails the team inbox; reply-to set to same.
+- Admin dashboard at /admin (unlisted, admin-only via ADMIN_EMAILS env): Overview stats,
+  Founder Applications (status pipeline: submitted → screening → shortlisted → discovery →
+  validation → founder_review → approved/rejected), Investor Registrations (verification_pending →
+  verified → approved/rejected), Insights CMS (create/edit/publish/unpublish/delete), Messages.
+  Account page shows "Admin Dashboard" shortcut when the signed-in user is an admin.
+- Pitch deck upload: founders attach PDF/PPT/DOC (max 15MB) in the application form; stored in
+  Emergent object storage (EMERGENT_LLM_KEY), metadata in db.files (soft-delete pattern); admins
+  download via /api/admin/files/{file_id}/download.
+- Insights CMS: articles live in db.insights; public GET /api/insights serves published articles;
+  6 launch articles seeded on startup. Public InsightsSection fetches from API with code fallback.
+
 ## Pending / Notes
-- OWNER_NOTIFY_EMAIL is empty in backend/.env — team notification emails are skipped until the
-  user provides their real team inbox. Applicant confirmation emails already work.
-- Pitch deck field is a link input (no file storage yet — needs object-storage integration).
-- Live Google OAuth round-trip not tested in-browser (requires a real Google account click-through);
-  session/me/logout verified via minted test session.
+- Live Google OAuth round-trip not tested in-browser (needs a real Google account); session
+  mechanics verified via minted test sessions, admin access verified for tulasi.reddy@theepoh.com.
+- Test data cleaned; DB starts fresh (insights re-seed automatically if emptied).
 
 ## Backlog
-- P0: Set OWNER_NOTIFY_EMAIL (user's real team email) to enable internal notifications.
-- P1: Admin dashboard (applications/investors/ventures pipeline, statuses, analytics).
-- P1: Founder/investor document upload (object storage) for pitch decks.
-- P1: CMS for Insights articles (currently static content in code).
-- P2: Ventures + ownership records + milestones/KPI entities (multi-venture platform per §31).
+- P1: Status-change notification emails to applicants when admin moves pipeline stage.
+- P1: Ventures + ownership records + milestones/KPI entities (multi-venture platform per §31).
 - P2: JARVIS internal AI agent (daily summaries, KPI monitoring, alerts).
 - P2: Analytics dashboards (conversion, cost per qualified lead).
 - P2: Dedicated campaign landing pages (/build-with-us, /invest-with-us aliases).

@@ -23,6 +23,7 @@ export default function AccountPage() {
   const { user, loading, login, logout } = useAuth();
   const location = useLocation();
   const [activity, setActivity] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const effectiveUser = user || location.state?.user || null;
 
   useEffect(() => {
@@ -31,6 +32,10 @@ export default function AccountPage() {
       .get(`${API}/my/activity`)
       .then((r) => setActivity(r.data))
       .catch(() => setActivity(null));
+    axios
+      .get(`${API}/admin/overview`)
+      .then(() => setIsAdmin(true))
+      .catch(() => setIsAdmin(false));
   }, [effectiveUser]);
 
   if (loading && !effectiveUser) {
@@ -89,13 +94,24 @@ export default function AccountPage() {
                 <p className="text-xs text-gray-500 mt-1" data-testid="account-user-email">{effectiveUser.email}</p>
               </div>
             </div>
-            <button
-              onClick={logout}
-              data-testid="account-logout-button"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-xs font-medium text-gray-300 hover:border-champagne/50 hover:text-white transition-colors duration-300"
-            >
-              <LogOut size={14} /> Sign out
-            </button>
+            <div className="flex items-center gap-3">
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  data-testid="account-admin-link"
+                  className="inline-flex items-center gap-2 rounded-full bg-champagne text-obsidian px-5 py-2.5 text-xs font-bold hover:bg-champagneBright transition-colors duration-300"
+                >
+                  Admin Dashboard
+                </Link>
+              )}
+              <button
+                onClick={logout}
+                data-testid="account-logout-button"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-xs font-medium text-gray-300 hover:border-champagne/50 hover:text-white transition-colors duration-300"
+              >
+                <LogOut size={14} /> Sign out
+              </button>
+            </div>
           </div>
         </Reveal>
 
