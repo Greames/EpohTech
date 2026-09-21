@@ -596,16 +596,52 @@ async def admin_founder_applications(request: Request):
     return {"applications": items}
 
 
+_STATUS_LABELS = {
+    "submitted": "Submitted", "screening": "Screening", "shortlisted": "Shortlisted",
+    "discovery": "Discovery", "validation": "Validation", "founder_review": "Founder Review",
+    "approved": "Approved", "rejected": "Rejected",
+    "verification_pending": "Verification Pending", "verified": "Verified",
+}
+
+
+async def send_status_email(kind: str, doc: dict, new_status: str):
+    label = _STATUS_LABELS.get(new_status, new_status.replace("_", " ").title())
+    name = escape(doc.get("name", "there"))
+    ref = escape(doc.get("application_id") or doc.get("registration_id") or "")
+    if kind == "founder":
+        subject = f"Application update: {label} — Second Salary Capital"
+        detail = ("Your founder application has moved to "
+                  f'<strong style="color:#E6C280">{escape(label)}</strong>. '
+                  "Our team will reach out directly whenever the next step involves you.")
+    else:
+        subject = f"Investor network update: {label} — Second Salary Capital"
+        detail = ("Your investor registration status is now "
+                  f'<strong style="color:#E6C280">{escape(label)}</strong>.')
+        if new_status in ("verified", "approved"):
+            detail += (" You now have access to live venture opportunities — sign in to your "
+                       "Second Salary Capital account to explore them.")
+    html = _email_shell(
+        "Pipeline update",
+        f'<p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#D1D5DB">Hi {name},</p>'
+        f'<p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#D1D5DB">{detail}</p>'
+        f'<p style="margin:0;font-size:12px;color:#9CA3AF">Reference: <span style="font-family:monospace">{ref}</span></p>',
+    )
+    await send_email(to=doc["email"], subject=subject, html=html)
+
+
 @api_router.patch("/admin/founder-applications/{application_id}")
 async def admin_update_founder_status(application_id: str, payload: StatusUpdate, request: Request):
     await require_admin(request)
     if payload.status not in FOUNDER_STATUSES:
         raise HTTPException(status_code=400, detail="Invalid status")
-    res = await db.founder_applications.update_one(
-        {"application_id": application_id}, {"$set": {"status": payload.status}}
-    )
-    if res.matched_count == 0:
+    doc = await db.founder_applications.find_one({"application_id": application_id}, {"_id": 0})
+    if not doc:
         raise HTTPException(status_code=404, detail="Application not found")
+    if doc.get("status") != payload.status:
+        await db.founder_applications.update_one(
+            {"application_id": application_id}, {"$set": {"status": payload.status}}
+        )
+        asyncio.create_task(send_status_email("founder", doc, payload.status))
     return {"status": "success", "application_id": application_id, "new_status": payload.status}
 
 
@@ -621,11 +657,14 @@ async def admin_update_investor_status(registration_id: str, payload: StatusUpda
     await require_admin(request)
     if payload.status not in INVESTOR_STATUSES:
         raise HTTPException(status_code=400, detail="Invalid status")
-    res = await db.investor_registrations.update_one(
-        {"registration_id": registration_id}, {"$set": {"status": payload.status}}
-    )
-    if res.matched_count == 0:
+    doc = await db.investor_registrations.find_one({"registration_id": registration_id}, {"_id": 0})
+    if not doc:
         raise HTTPException(status_code=404, detail="Registration not found")
+    if doc.get("status") != payload.status:
+        await db.investor_registrations.update_one(
+            {"registration_id": registration_id}, {"$set": {"status": payload.status}}
+        )
+        asyncio.create_task(send_status_email("investor", doc, payload.status))
     return {"status": "success", "registration_id": registration_id, "new_status": payload.status}
 
 
@@ -694,6 +733,356 @@ async def admin_download_file(file_id: str, request: Request):
         media_type=record.get("content_type") or content_type,
         headers={"Content-Disposition": f'attachment; filename="{record["original_filename"]}"'},
     )
+
+
+# ---------------- Ventures, milestones, cap tables ----------------
+class VentureIn(BaseModel):
+    name: str
+    industry: Optional[str] = ""
+    stage: Optional[str] = "Validation"
+    description: Optional[str] = ""
+    capital_required: Optional[str] = ""
+    founder_name: Optional[str] = ""
+    status: Optional[str] = "active"
+    visible_to_investors: bool = False
+
+
+class MilestoneIn(BaseModel):
+    title: str
+    due_date: Optional[str] = ""
+    done: bool = False
+
+
+class OwnershipIn(BaseModel):
+    party_name: str
+    party_type: Optional[str] = "founder"
+    percentage: float = 0
+
+
+class InterestIn(BaseModel):
+    note: Optional[str] = ""
+
+
+@api_router.get("/admin/ventures")
+async def admin_list_ventures(request: Request):
+    await require_admin(request)
+    ventures = await db.ventures.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    for v in ventures:
+        v["milestones"] = await db.milestones.find({"venture_id": v["venture_id"]}, {"_id": 0}).sort("created_at", 1).to_list(200)
+        v["ownership"] = await db.ownership.find({"venture_id": v["venture_id"]}, {"_id": 0}).to_list(100)
+        v["interests_count"] = await db.interests.count_documents({"venture_id": v["venture_id"]})
+    return {"ventures": ventures}
+
+
+@api_router.post("/admin/ventures")
+async def admin_create_venture(payload: VentureIn, request: Request):
+    await require_admin(request)
+    doc = payload.model_dump()
+    doc.update({"venture_id": f"vn_{uuid.uuid4().hex[:12]}", "created_at": datetime.now(timezone.utc).isoformat()})
+    await db.ventures.insert_one(dict(doc))
+    return doc
+
+
+@api_router.put("/admin/ventures/{venture_id}")
+async def admin_update_venture(venture_id: str, payload: VentureIn, request: Request):
+    await require_admin(request)
+    res = await db.ventures.update_one({"venture_id": venture_id}, {"$set": payload.model_dump()})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Venture not found")
+    return await db.ventures.find_one({"venture_id": venture_id}, {"_id": 0})
+
+
+@api_router.delete("/admin/ventures/{venture_id}")
+async def admin_delete_venture(venture_id: str, request: Request):
+    await require_admin(request)
+    res = await db.ventures.delete_one({"venture_id": venture_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Venture not found")
+    await db.milestones.delete_many({"venture_id": venture_id})
+    await db.ownership.delete_many({"venture_id": venture_id})
+    await db.interests.delete_many({"venture_id": venture_id})
+    return {"status": "success"}
+
+
+@api_router.post("/admin/ventures/{venture_id}/milestones")
+async def admin_add_milestone(venture_id: str, payload: MilestoneIn, request: Request):
+    await require_admin(request)
+    if not await db.ventures.find_one({"venture_id": venture_id}):
+        raise HTTPException(status_code=404, detail="Venture not found")
+    doc = payload.model_dump()
+    doc.update({
+        "milestone_id": f"ms_{uuid.uuid4().hex[:12]}",
+        "venture_id": venture_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    await db.milestones.insert_one(dict(doc))
+    return doc
+
+
+@api_router.patch("/admin/milestones/{milestone_id}")
+async def admin_update_milestone(milestone_id: str, payload: MilestoneIn, request: Request):
+    await require_admin(request)
+    res = await db.milestones.update_one({"milestone_id": milestone_id}, {"$set": payload.model_dump()})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Milestone not found")
+    return await db.milestones.find_one({"milestone_id": milestone_id}, {"_id": 0})
+
+
+@api_router.delete("/admin/milestones/{milestone_id}")
+async def admin_delete_milestone(milestone_id: str, request: Request):
+    await require_admin(request)
+    res = await db.milestones.delete_one({"milestone_id": milestone_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Milestone not found")
+    return {"status": "success"}
+
+
+@api_router.post("/admin/ventures/{venture_id}/ownership")
+async def admin_add_ownership(venture_id: str, payload: OwnershipIn, request: Request):
+    await require_admin(request)
+    if not await db.ventures.find_one({"venture_id": venture_id}):
+        raise HTTPException(status_code=404, detail="Venture not found")
+    doc = payload.model_dump()
+    doc.update({
+        "ownership_id": f"ow_{uuid.uuid4().hex[:12]}",
+        "venture_id": venture_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    await db.ownership.insert_one(dict(doc))
+    return doc
+
+
+@api_router.delete("/admin/ownership/{ownership_id}")
+async def admin_delete_ownership(ownership_id: str, request: Request):
+    await require_admin(request)
+    res = await db.ownership.delete_one({"ownership_id": ownership_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Ownership record not found")
+    return {"status": "success"}
+
+
+@api_router.get("/admin/interests")
+async def admin_list_interests(request: Request):
+    await require_admin(request)
+    items = await db.interests.find({}, {"_id": 0}).sort("created_at", -1).to_list(200)
+    return {"interests": items}
+
+
+# ---------------- Investor portal ----------------
+async def require_verified_investor(request: Request):
+    user = await get_current_user(request)
+    if user["email"].lower() in ADMIN_EMAILS:
+        return user
+    reg = await db.investor_registrations.find_one({"email": user["email"]}, {"_id": 0})
+    if not reg or reg.get("status") not in ("verified", "approved"):
+        raise HTTPException(status_code=403, detail="Investor verification required")
+    return user
+
+
+@api_router.get("/opportunities")
+async def list_opportunities(request: Request):
+    user = await require_verified_investor(request)
+    ventures = await db.ventures.find(
+        {"visible_to_investors": True, "status": {"$ne": "exited"}}, {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    out = []
+    for v in ventures:
+        total = await db.milestones.count_documents({"venture_id": v["venture_id"]})
+        done = await db.milestones.count_documents({"venture_id": v["venture_id"], "done": True})
+        mine = await db.interests.find_one({"venture_id": v["venture_id"], "investor_email": user["email"]})
+        out.append({
+            "venture_id": v["venture_id"],
+            "name": v["name"],
+            "industry": v.get("industry", ""),
+            "stage": v.get("stage", ""),
+            "description": v.get("description", ""),
+            "capital_required": v.get("capital_required", ""),
+            "founder_name": v.get("founder_name", ""),
+            "milestones_total": total,
+            "milestones_done": done,
+            "my_interest": bool(mine),
+        })
+    return {"opportunities": out}
+
+
+@api_router.post("/opportunities/{venture_id}/interest")
+async def express_interest(venture_id: str, payload: InterestIn, request: Request):
+    user = await require_verified_investor(request)
+    venture = await db.ventures.find_one({"venture_id": venture_id, "visible_to_investors": True}, {"_id": 0})
+    if not venture:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+    existing = await db.interests.find_one({"venture_id": venture_id, "investor_email": user["email"]})
+    if existing:
+        return {"status": "success", "interest_id": existing["interest_id"], "already": True}
+    doc = {
+        "interest_id": f"int_{uuid.uuid4().hex[:12]}",
+        "venture_id": venture_id,
+        "venture_name": venture["name"],
+        "investor_email": user["email"],
+        "investor_name": user.get("name", ""),
+        "note": payload.note,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.interests.insert_one(dict(doc))
+    if OWNER_NOTIFY_EMAIL:
+        notify_html = _email_shell(
+            f'Investor interest: {escape(venture["name"])}',
+            _kv_rows({
+                "venture": venture["name"], "investor": user.get("name", ""),
+                "email": user["email"], "note": payload.note or "-",
+            }),
+        )
+        asyncio.create_task(send_email(
+            to=OWNER_NOTIFY_EMAIL,
+            subject=f'Investor interest in {venture["name"]} — {user.get("name") or user["email"]}',
+            html=notify_html,
+        ))
+    return {"status": "success", "interest_id": doc["interest_id"]}
+
+
+# ---------------- JARVIS daily digest ----------------
+async def build_digest_context() -> dict:
+    now = datetime.now(timezone.utc)
+    since = (now - timedelta(hours=24)).isoformat()
+    today = now.date().isoformat()
+    week = (now + timedelta(days=7)).date().isoformat()
+    ventures = {v["venture_id"]: v["name"] for v in await db.ventures.find({}, {"_id": 0}).to_list(100)}
+
+    def with_venture(items):
+        return [{**{k: v for k, v in m.items()}, "venture": ventures.get(m.get("venture_id"), "?")} for m in items]
+
+    founder_apps = await db.founder_applications.find({}, {"_id": 0}).to_list(500)
+    pipeline = {}
+    for a in founder_apps:
+        pipeline[a.get("status", "submitted")] = pipeline.get(a.get("status", "submitted"), 0) + 1
+
+    return {
+        "date": today,
+        "new_founder_applications_24h": await db.founder_applications.find(
+            {"created_at": {"$gte": since}}, {"_id": 0, "name": 1, "industry": 1, "idea": 1, "capital_required": 1, "created_at": 1}).to_list(50),
+        "new_investor_registrations_24h": await db.investor_registrations.find(
+            {"created_at": {"$gte": since}}, {"_id": 0, "name": 1, "investment_range": 1, "preferred_sectors": 1, "created_at": 1}).to_list(50),
+        "new_contact_messages_24h": await db.contact_messages.find(
+            {"created_at": {"$gte": since}}, {"_id": 0, "name": 1, "topic": 1, "created_at": 1}).to_list(50),
+        "new_investor_interests_24h": with_venture(await db.interests.find(
+            {"created_at": {"$gte": since}}, {"_id": 0}).to_list(50)),
+        "overdue_milestones": with_venture(await db.milestones.find(
+            {"done": False, "due_date": {"$ne": "", "$lt": today}}, {"_id": 0}).to_list(100)),
+        "milestones_due_next_7_days": with_venture(await db.milestones.find(
+            {"done": False, "due_date": {"$gte": today, "$lte": week}}, {"_id": 0}).to_list(100)),
+        "founder_pipeline_counts": pipeline,
+        "active_ventures": await db.ventures.count_documents({"status": "active"}),
+    }
+
+
+async def generate_digest_text(context: dict) -> str:
+    import json
+    from emergentintegrations.llm.chat import LlmChat, UserMessage, TextDelta, StreamDone
+
+    chat = LlmChat(
+        api_key=EMERGENT_KEY,
+        session_id=f"jarvis-{uuid.uuid4().hex[:8]}",
+        system_message=(
+            "You are JARVIS, the internal operations AI of Second Salary Capital, a venture studio. "
+            "Write the daily operations digest for the founding team. Plain text, short headed sections "
+            "with bullets, under 250 words. Lead with anything needing attention (overdue milestones, "
+            "new investor interest). No greeting, no sign-off, no fluff. If a section has no activity, skip it."
+        ),
+    ).with_model("openai", "gpt-5.4")
+    prompt = (
+        "Last-24-hour activity data (JSON):\n"
+        + json.dumps(context, indent=1, default=str)
+        + "\n\nWrite today's JARVIS digest: what happened, what needs attention, and suggested follow-ups."
+    )
+    parts = []
+    async for ev in chat.stream_message(UserMessage(text=prompt)):
+        if isinstance(ev, TextDelta):
+            parts.append(ev.content)
+        elif isinstance(ev, StreamDone):
+            break
+    return "".join(parts).strip()
+
+
+def _fallback_digest(context: dict) -> str:
+    lines = [f"JARVIS DIGEST — {context['date']}", ""]
+    lines.append(f"New founder applications (24h): {len(context['new_founder_applications_24h'])}")
+    for a in context["new_founder_applications_24h"]:
+        lines.append(f"- {a.get('name')} ({a.get('industry') or 'general'})")
+    lines.append(f"New investor registrations (24h): {len(context['new_investor_registrations_24h'])}")
+    for r in context["new_investor_registrations_24h"]:
+        lines.append(f"- {r.get('name')} ({r.get('investment_range') or 'range TBD'})")
+    lines.append(f"New messages (24h): {len(context['new_contact_messages_24h'])}")
+    lines.append(f"New investor interest (24h): {len(context['new_investor_interests_24h'])}")
+    for it in context["new_investor_interests_24h"]:
+        lines.append(f"- {it.get('investor_name') or it.get('investor_email')} → {it.get('venture')}")
+    if context["overdue_milestones"]:
+        lines.append("")
+        lines.append("OVERDUE MILESTONES:")
+        for m in context["overdue_milestones"]:
+            lines.append(f"- [{m.get('venture')}] {m.get('title')} (due {m.get('due_date')})")
+    if context["milestones_due_next_7_days"]:
+        lines.append("")
+        lines.append("DUE IN THE NEXT 7 DAYS:")
+        for m in context["milestones_due_next_7_days"]:
+            lines.append(f"- [{m.get('venture')}] {m.get('title')} (due {m.get('due_date')})")
+    return "\n".join(lines)
+
+
+async def send_jarvis_digest(trigger: str = "manual") -> str:
+    context = await build_digest_context()
+    try:
+        text = await generate_digest_text(context)
+        if not text:
+            raise ValueError("empty digest")
+    except Exception as e:
+        logger.error(f"JARVIS LLM failed, using fallback: {e}")
+        text = _fallback_digest(context)
+    await db.jarvis_runs.insert_one({
+        "run_id": f"jar_{uuid.uuid4().hex[:12]}",
+        "trigger": trigger,
+        "preview": text,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    if OWNER_NOTIFY_EMAIL:
+        body = "".join(
+            f'<p style="margin:0 0 6px;font-size:13px;line-height:1.7;color:#D1D5DB">{escape(line)}</p>'
+            if line.strip() else '<div style="height:10px"></div>'
+            for line in text.split("\n")
+        )
+        await send_email(
+            to=OWNER_NOTIFY_EMAIL,
+            subject=f"JARVIS Daily Digest — {context['date']}",
+            html=_email_shell("JARVIS Daily Digest", body),
+        )
+    return text
+
+
+@api_router.post("/admin/jarvis/digest")
+async def admin_send_digest(request: Request):
+    await require_admin(request)
+    text = await send_jarvis_digest(trigger="manual")
+    return {"status": "success", "preview": text}
+
+
+async def _jarvis_loop():
+    while True:
+        now = datetime.now(timezone.utc)
+        next_run = now.replace(hour=7, minute=0, second=0, microsecond=0)
+        if next_run <= now:
+            next_run += timedelta(days=1)
+        await asyncio.sleep((next_run - now).total_seconds())
+        try:
+            await send_jarvis_digest(trigger="scheduled")
+            logger.info("JARVIS scheduled digest sent")
+        except Exception as e:
+            logger.error(f"JARVIS scheduled digest failed: {e}")
+
+
+@app.on_event("startup")
+async def jarvis_scheduler_start():
+    if OWNER_NOTIFY_EMAIL:
+        asyncio.create_task(_jarvis_loop())
+        logger.info("JARVIS daily digest scheduler started (07:00 UTC)")
 
 
 SEED_INSIGHTS = [

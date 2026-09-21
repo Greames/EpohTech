@@ -158,6 +158,15 @@ export default function AccountPage() {
                 </h2>
                 <span className="font-mono text-xs text-gray-500">{investorRegs.length}</span>
               </div>
+              {investorRegs.some((r) => ["verified", "approved"].includes(r.status)) && (
+                <Link
+                  to="/opportunities"
+                  data-testid="account-opportunities-link"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-champagne/10 border border-champagne/30 text-champagne px-5 py-2.5 text-xs font-bold hover:bg-champagne hover:text-obsidian transition-colors duration-300"
+                >
+                  Browse live opportunities →
+                </Link>
+              )}
               {investorRegs.length === 0 ? (
                 <div className="mt-6 text-sm text-gray-500 leading-relaxed">
                   Not registered yet.{" "}

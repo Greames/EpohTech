@@ -54,14 +54,34 @@ mobile-first. Integrations: Emergent-managed Google sign-in, Resend transactiona
 - Insights CMS: articles live in db.insights; public GET /api/insights serves published articles;
   6 launch articles seeded on startup. Public InsightsSection fetches from API with code fallback.
 
+## Implemented (2026-09-21, round 3)
+- Status-change emails: admin pipeline moves (founder + investor) email the person automatically;
+  verified/approved investors are told opportunities access is open.
+- Venture Tracker: /admin → Ventures tab. Ventures CRUD (name, industry, stage, capital required,
+  founder, status, investor-visibility), milestones with due dates + overdue highlighting,
+  cap table rows (party / type / %) with live allocation total. Collections: ventures, milestones,
+  ownership.
+- Investor Portal: /opportunities — verified/approved investors (matched by Google sign-in email)
+  see investor-visible ventures with stage, capital, founder, milestone progress; Express Interest
+  stores to db.interests and emails the team. Unverified → 403 with verification-pending screen.
+  Account page links to /opportunities once verified.
+- JARVIS Digest: POST /api/admin/jarvis/digest generates an AI digest (gpt-5.4 via emergentintegrations,
+  streamed + accumulated; plain fallback if LLM fails) covering 24h applications/registrations/messages/
+  interests, overdue + upcoming milestones, pipeline counts; emailed to the team inbox; auto-scheduler
+  runs daily 07:00 UTC while the pod is up; runs logged to db.jarvis_runs. Admin Overview has a
+  "Send Now" button with inline preview.
+
 ## Pending / Notes
-- Live Google OAuth round-trip not tested in-browser (needs a real Google account); session
-  mechanics verified via minted test sessions, admin access verified for tulasi.reddy@theepoh.com.
+- Live Google OAuth round-trip not tested in-browser (needs a real Google account); all auth paths
+  verified via minted test sessions (admin + verified investor).
+- The daily scheduler runs inside the backend process — if the pod is down at 07:00 UTC that day's
+  digest is skipped; the manual Send Now button always works.
 - Test data cleaned; DB starts fresh (insights re-seed automatically if emptied).
 
 ## Backlog
-- P1: Status-change notification emails to applicants when admin moves pipeline stage.
-- P1: Ventures + ownership records + milestones/KPI entities (multi-venture platform per §31).
-- P2: JARVIS internal AI agent (daily summaries, KPI monitoring, alerts).
+- P1: Per-venture documents (pitch decks, financials) attached to opportunities for investors.
+- P1: Investor NDA/acknowledgement step before viewing sensitive opportunity details.
+- P2: Portfolio KPI fields on ventures (revenue, growth) with charts in admin.
+- P2: JARVIS expansions — KPI anomaly alerts, weekly investor activity summary, application triage scoring.
 - P2: Analytics dashboards (conversion, cost per qualified lead).
 - P2: Dedicated campaign landing pages (/build-with-us, /invest-with-us aliases).

@@ -17,6 +17,7 @@ import InsightsPage from "@/pages/InsightsPage";
 import ContactPage from "@/pages/ContactPage";
 import AccountPage from "@/pages/AccountPage";
 import AdminPage from "@/pages/AdminPage";
+import OpportunitiesPage from "@/pages/OpportunitiesPage";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -44,6 +45,7 @@ function AppRouter() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/account" element={<AccountPage />} />
       <Route path="/admin" element={<AdminPage />} />
+      <Route path="/opportunities" element={<OpportunitiesPage />} />
       <Route path="*" element={<HomePage />} />
     </Routes>
   );

@@ -66,8 +66,9 @@ export default function InvestorRegistrationForm() {
         <h3 className="mt-6 text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Verification underway.</h3>
         <p className="mt-4 text-gray-400 max-w-md mx-auto leading-relaxed text-sm sm:text-base">
           Your registration <span className="font-mono text-champagne text-xs">{done.registration_id}</span> is in
-          <strong className="text-white"> VERIFICATION</strong>. Once approved, you will start seeing structured
-          venture opportunities. A confirmation email is on its way.
+          <strong className="text-white"> VERIFICATION</strong>. Once approved, live venture opportunities will be
+          waiting for you on the Opportunities page — sign in with this email to access them.
+          A confirmation email is on its way.
         </p>
       </motion.div>
     );

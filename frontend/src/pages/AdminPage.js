@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, RefreshCw, Plus, Pencil, Trash2, X, Download, Eye, EyeOff, LayoutDashboard,
+  Building2, Sparkles, CalendarClock, Globe,
 } from "lucide-react";
 import { toast } from "sonner";
 import axios, { API } from "@/lib/api";
@@ -10,13 +11,21 @@ import { Eyebrow } from "@/components/Reveal";
 
 const FOUNDER_STATUSES = ["submitted", "screening", "shortlisted", "discovery", "validation", "founder_review", "approved", "rejected"];
 const INVESTOR_STATUSES = ["verification_pending", "verified", "approved", "rejected"];
+const VENTURE_STAGES = ["Validation", "Build", "Launch", "Traction", "Scale"];
+const VENTURE_STATUSES = ["active", "paused", "exited"];
+const PARTY_TYPES = ["founder", "ssc", "investor", "other"];
 const TABS = [
   { id: "overview", label: "Overview" },
+  { id: "ventures", label: "Ventures" },
   { id: "founders", label: "Founder Applications" },
   { id: "investors", label: "Investor Registrations" },
   { id: "insights", label: "Insights" },
   { id: "messages", label: "Messages" },
 ];
+const EMPTY_VENTURE = {
+  name: "", industry: "", stage: "Validation", description: "",
+  capital_required: "", founder_name: "", status: "active", visible_to_investors: false,
+};
 
 const statusCls = (s) =>
   s === "approved" || s === "verified"
@@ -60,24 +69,35 @@ export default function AdminPage() {
   const [investors, setInvestors] = useState([]);
   const [messages, setMessages] = useState([]);
   const [insights, setInsights] = useState([]);
+  const [ventures, setVentures] = useState([]);
+  const [interests, setInterests] = useState([]);
+  const [ventureEditor, setVentureEditor] = useState(null);
+  const [digest, setDigest] = useState(null);
+  const [digestBusy, setDigestBusy] = useState(false);
+  const [milestoneDrafts, setMilestoneDrafts] = useState({});
+  const [ownershipDrafts, setOwnershipDrafts] = useState({});
   const [busy, setBusy] = useState(false);
   const [editor, setEditor] = useState(null);
 
   const loadAll = useCallback(async () => {
     setBusy(true);
     try {
-      const [ov, fa, ir, cm, ins] = await Promise.all([
+      const [ov, fa, ir, cm, ins, ve, ints] = await Promise.all([
         axios.get(`${API}/admin/overview`),
         axios.get(`${API}/admin/founder-applications`),
         axios.get(`${API}/admin/investor-registrations`),
         axios.get(`${API}/admin/contacts`),
         axios.get(`${API}/admin/insights`),
+        axios.get(`${API}/admin/ventures`),
+        axios.get(`${API}/admin/interests`),
       ]);
       setOverview(ov.data);
       setFounders(fa.data.applications || []);
       setInvestors(ir.data.registrations || []);
       setMessages(cm.data.messages || []);
       setInsights(ins.data.insights || []);
+      setVentures(ve.data.ventures || []);
+      setInterests(ints.data.interests || []);
       setDenied(false);
     } catch (e) {
       if (e.response?.status === 403) setDenied(true);
@@ -89,6 +109,114 @@ export default function AdminPage() {
   useEffect(() => {
     if (user) loadAll();
   }, [user, loadAll]);
+
+  const saveVenture = async () => {
+    if (!ventureEditor.name.trim()) {
+      toast.error("Venture name is required");
+      return;
+    }
+    try {
+      if (ventureEditor.venture_id) {
+        await axios.put(`${API}/admin/ventures/${ventureEditor.venture_id}`, ventureEditor);
+        toast.success("Venture updated");
+      } else {
+        await axios.post(`${API}/admin/ventures`, ventureEditor);
+        toast.success("Venture created");
+      }
+      setVentureEditor(null);
+      loadAll();
+    } catch {
+      toast.error("Could not save venture");
+    }
+  };
+
+  const removeVenture = async (id) => {
+    try {
+      await axios.delete(`${API}/admin/ventures/${id}`);
+      setVentures((list) => list.filter((v) => v.venture_id !== id));
+      toast.success("Venture deleted");
+    } catch {
+      toast.error("Could not delete venture");
+    }
+  };
+
+  const addMilestone = async (ventureId) => {
+    const draft = milestoneDrafts[ventureId] || {};
+    if (!draft.title?.trim()) {
+      toast.error("Milestone title is required");
+      return;
+    }
+    try {
+      await axios.post(`${API}/admin/ventures/${ventureId}/milestones`, {
+        title: draft.title, due_date: draft.due_date || "", done: false,
+      });
+      setMilestoneDrafts((d) => ({ ...d, [ventureId]: {} }));
+      loadAll();
+    } catch {
+      toast.error("Could not add milestone");
+    }
+  };
+
+  const toggleMilestone = async (m) => {
+    try {
+      await axios.patch(`${API}/admin/milestones/${m.milestone_id}`, {
+        title: m.title, due_date: m.due_date || "", done: !m.done,
+      });
+      loadAll();
+    } catch {
+      toast.error("Could not update milestone");
+    }
+  };
+
+  const removeMilestone = async (id) => {
+    try {
+      await axios.delete(`${API}/admin/milestones/${id}`);
+      loadAll();
+    } catch {
+      toast.error("Could not delete milestone");
+    }
+  };
+
+  const addOwnership = async (ventureId) => {
+    const draft = ownershipDrafts[ventureId] || {};
+    if (!draft.party_name?.trim() || !draft.percentage) {
+      toast.error("Party name and percentage are required");
+      return;
+    }
+    try {
+      await axios.post(`${API}/admin/ventures/${ventureId}/ownership`, {
+        party_name: draft.party_name,
+        party_type: draft.party_type || "founder",
+        percentage: parseFloat(draft.percentage),
+      });
+      setOwnershipDrafts((d) => ({ ...d, [ventureId]: {} }));
+      loadAll();
+    } catch {
+      toast.error("Could not add ownership record");
+    }
+  };
+
+  const removeOwnership = async (id) => {
+    try {
+      await axios.delete(`${API}/admin/ownership/${id}`);
+      loadAll();
+    } catch {
+      toast.error("Could not delete record");
+    }
+  };
+
+  const sendDigest = async () => {
+    setDigestBusy(true);
+    try {
+      const r = await axios.post(`${API}/admin/jarvis/digest`);
+      setDigest(r.data.preview);
+      toast.success("JARVIS digest sent to the team inbox");
+    } catch {
+      toast.error("Could not generate digest");
+    } finally {
+      setDigestBusy(false);
+    }
+  };
 
   const patchStatus = async (kind, id, status) => {
     try {
@@ -234,6 +362,61 @@ export default function AdminPage() {
           </div>
         )}
 
+        {tab === "overview" && (
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6" data-testid="admin-digest-section">
+            <div className="rounded-3xl border border-champagne/20 bg-charcoal/60 p-7">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <h3 className="text-lg font-bold text-white flex items-center gap-3">
+                  <Sparkles size={18} className="text-champagne" /> JARVIS Daily Digest
+                </h3>
+                <button
+                  onClick={sendDigest}
+                  disabled={digestBusy}
+                  data-testid="admin-send-digest-button"
+                  className="inline-flex items-center gap-2 rounded-full bg-champagne text-obsidian font-bold px-5 py-2.5 text-xs hover:bg-champagneBright transition-colors duration-300 disabled:opacity-60"
+                >
+                  {digestBusy ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
+                  {digestBusy ? "GENERATING…" : "SEND NOW"}
+                </button>
+              </div>
+              <p className="mt-3 text-xs text-gray-500 leading-relaxed">
+                AI summary of the last 24 hours — applications, investors, messages, interest and overdue
+                milestones. Auto-emailed to the team every morning; send one manually anytime.
+              </p>
+              {digest && (
+                <pre
+                  className="mt-4 max-h-64 overflow-y-auto whitespace-pre-wrap rounded-2xl border border-white/10 bg-obsidian/70 p-5 text-xs text-gray-300 leading-relaxed"
+                  data-testid="admin-digest-preview"
+                >
+                  {digest}
+                </pre>
+              )}
+            </div>
+            <div className="rounded-3xl border border-white/5 bg-charcoal/60 p-7" data-testid="admin-interests-card">
+              <h3 className="text-lg font-bold text-white flex items-center gap-3">
+                <Globe size={18} className="text-champagne" /> Investor Interest
+              </h3>
+              {interests.length === 0 ? (
+                <p className="mt-3 text-xs text-gray-500 leading-relaxed">No interest expressed yet. Verified investors can express interest from the Opportunities page.</p>
+              ) : (
+                <ul className="mt-4 space-y-3">
+                  {interests.slice(0, 6).map((it) => (
+                    <li key={it.interest_id} data-testid={`admin-interest-${it.interest_id}`} className="rounded-xl border border-white/5 bg-obsidian/60 px-4 py-3">
+                      <p className="text-sm text-white font-semibold">
+                        {it.investor_name || it.investor_email} <span className="text-champagne font-normal">→ {it.venture_name}</span>
+                      </p>
+                      {it.note && <p className="mt-1 text-xs text-gray-400">{it.note}</p>}
+                      <p className="mt-1 font-mono text-[9px] text-gray-600">
+                        {it.investor_email} · {it.created_at ? new Date(it.created_at).toLocaleString() : ""}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        )}
+
         {tab === "founders" && (
           <div className="mt-10 space-y-5" data-testid="admin-founder-list">
             {founders.length === 0 && <p className="text-gray-500 text-sm">No founder applications yet.</p>}
@@ -321,6 +504,149 @@ export default function AdminPage() {
           </div>
         )}
 
+        {tab === "ventures" && (
+          <div className="mt-10" data-testid="admin-ventures-list">
+            <button
+              onClick={() => setVentureEditor({ ...EMPTY_VENTURE })}
+              data-testid="admin-new-venture-button"
+              className="inline-flex items-center gap-2 rounded-full bg-champagne text-obsidian font-bold px-6 py-3 text-xs tracking-wide hover:bg-champagneBright transition-colors duration-300"
+            >
+              <Plus size={14} /> NEW VENTURE
+            </button>
+            <div className="mt-6 space-y-6">
+              {ventures.length === 0 && (
+                <p className="text-gray-500 text-sm">No ventures yet. Create the first company in the portfolio.</p>
+              )}
+              {ventures.map((v) => {
+                const totalPct = (v.ownership || []).reduce((s, o) => s + (o.percentage || 0), 0);
+                const md = milestoneDrafts[v.venture_id] || {};
+                const od = ownershipDrafts[v.venture_id] || {};
+                return (
+                  <div key={v.venture_id} data-testid={`admin-venture-${v.venture_id}`} className="rounded-3xl border border-white/5 bg-charcoal/50 p-6 sm:p-8">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <h3 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                            <Building2 size={19} className="text-champagne" /> {v.name}
+                          </h3>
+                          <span className="font-mono text-[9px] uppercase tracking-[0.15em] rounded-full border border-champagne/30 text-champagne px-2.5 py-0.5">{v.stage}</span>
+                          {v.industry && <span className="font-mono text-[9px] uppercase tracking-[0.15em] rounded-full border border-white/10 text-gray-400 px-2.5 py-0.5">{v.industry}</span>}
+                          <span className={`font-mono text-[9px] uppercase tracking-[0.15em] rounded-full border px-2.5 py-0.5 ${statusCls(v.status)}`}>{v.status}</span>
+                          {v.visible_to_investors && (
+                            <span className="font-mono text-[9px] uppercase tracking-[0.15em] rounded-full border border-epoh/40 text-purple-300 px-2.5 py-0.5 flex items-center gap-1">
+                              <Globe size={10} /> Investor-visible
+                            </span>
+                          )}
+                        </div>
+                        <p className="font-mono text-[10px] text-gray-600 mt-1.5">
+                          {v.venture_id} · {v.capital_required || "capital TBD"} · Founder: {v.founder_name || "studio-led"} · {v.interests_count || 0} investor interest
+                        </p>
+                        {v.description && <p className="mt-3 text-sm text-gray-400 leading-relaxed max-w-2xl">{v.description}</p>}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => setVentureEditor({ ...v })} data-testid={`admin-venture-edit-${v.venture_id}`} className="rounded-full border border-white/10 p-2.5 text-gray-400 hover:text-champagne hover:border-champagne/40 transition-colors duration-300" aria-label="Edit venture">
+                          <Pencil size={15} />
+                        </button>
+                        <button onClick={() => removeVenture(v.venture_id)} data-testid={`admin-venture-delete-${v.venture_id}`} className="rounded-full border border-white/10 p-2.5 text-gray-400 hover:text-red-400 hover:border-red-500/40 transition-colors duration-300" aria-label="Delete venture">
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-7 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div data-testid={`admin-venture-milestones-${v.venture_id}`}>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
+                          <CalendarClock size={12} className="text-champagne" /> Milestones ({(v.milestones || []).filter((m) => m.done).length}/{(v.milestones || []).length})
+                        </p>
+                        <ul className="mt-3 space-y-2">
+                          {(v.milestones || []).map((m) => {
+                            const overdue = !m.done && m.due_date && m.due_date < new Date().toISOString().slice(0, 10);
+                            return (
+                              <li key={m.milestone_id} data-testid={`admin-milestone-${m.milestone_id}`} className="flex items-center gap-3 rounded-xl border border-white/5 bg-obsidian/60 px-4 py-2.5">
+                                <input type="checkbox" checked={!!m.done} onChange={() => toggleMilestone(m)} data-testid={`admin-milestone-toggle-${m.milestone_id}`} className="h-4 w-4 accent-[#E6C280] cursor-pointer" />
+                                <span className={`flex-1 text-sm ${m.done ? "text-gray-600 line-through" : overdue ? "text-red-300" : "text-gray-300"}`}>{m.title}</span>
+                                {m.due_date && <span className={`font-mono text-[9px] ${overdue ? "text-red-400" : "text-gray-600"}`}>{m.due_date}{overdue ? " · overdue" : ""}</span>}
+                                <button onClick={() => removeMilestone(m.milestone_id)} data-testid={`admin-milestone-delete-${m.milestone_id}`} className="text-gray-600 hover:text-red-400 transition-colors duration-300" aria-label="Delete milestone">
+                                  <Trash2 size={13} />
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            value={md.title || ""}
+                            onChange={(e) => setMilestoneDrafts((d) => ({ ...d, [v.venture_id]: { ...md, title: e.target.value } }))}
+                            placeholder="New milestone"
+                            data-testid={`admin-milestone-input-${v.venture_id}`}
+                            className="flex-1 rounded-xl border border-white/10 bg-obsidian/70 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-champagne/50"
+                          />
+                          <input
+                            type="date"
+                            value={md.due_date || ""}
+                            onChange={(e) => setMilestoneDrafts((d) => ({ ...d, [v.venture_id]: { ...md, due_date: e.target.value } }))}
+                            data-testid={`admin-milestone-date-${v.venture_id}`}
+                            className="rounded-xl border border-white/10 bg-obsidian/70 px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-champagne/50 [color-scheme:dark]"
+                          />
+                          <button onClick={() => addMilestone(v.venture_id)} data-testid={`admin-milestone-add-${v.venture_id}`} className="rounded-xl bg-champagne/15 border border-champagne/30 text-champagne px-3.5 hover:bg-champagne hover:text-obsidian transition-colors duration-300" aria-label="Add milestone">
+                            <Plus size={15} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div data-testid={`admin-venture-captable-${v.venture_id}`}>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                          Cap Table · <span className={totalPct === 100 ? "text-emerald-400" : "text-champagne"}>{totalPct}%</span> allocated
+                        </p>
+                        <ul className="mt-3 space-y-2">
+                          {(v.ownership || []).map((o) => (
+                            <li key={o.ownership_id} data-testid={`admin-ownership-${o.ownership_id}`} className="flex items-center gap-3 rounded-xl border border-white/5 bg-obsidian/60 px-4 py-2.5">
+                              <span className="flex-1 text-sm text-gray-200">{o.party_name}</span>
+                              <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-gray-500">{o.party_type}</span>
+                              <span className="font-mono text-sm font-bold text-champagne">{o.percentage}%</span>
+                              <button onClick={() => removeOwnership(o.ownership_id)} data-testid={`admin-ownership-delete-${o.ownership_id}`} className="text-gray-600 hover:text-red-400 transition-colors duration-300" aria-label="Delete ownership">
+                                <Trash2 size={13} />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            value={od.party_name || ""}
+                            onChange={(e) => setOwnershipDrafts((d) => ({ ...d, [v.venture_id]: { ...od, party_name: e.target.value } }))}
+                            placeholder="Party (e.g. Founder, SSC)"
+                            data-testid={`admin-ownership-name-${v.venture_id}`}
+                            className="flex-1 rounded-xl border border-white/10 bg-obsidian/70 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-champagne/50"
+                          />
+                          <select
+                            value={od.party_type || "founder"}
+                            onChange={(e) => setOwnershipDrafts((d) => ({ ...d, [v.venture_id]: { ...od, party_type: e.target.value } }))}
+                            data-testid={`admin-ownership-type-${v.venture_id}`}
+                            className="rounded-xl border border-white/10 bg-obsidian px-2.5 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-champagne/50"
+                          >
+                            {PARTY_TYPES.map((t) => (<option key={t} value={t}>{t}</option>))}
+                          </select>
+                          <input
+                            type="number" min="0" max="100" step="0.5"
+                            value={od.percentage || ""}
+                            onChange={(e) => setOwnershipDrafts((d) => ({ ...d, [v.venture_id]: { ...od, percentage: e.target.value } }))}
+                            placeholder="%"
+                            data-testid={`admin-ownership-pct-${v.venture_id}`}
+                            className="w-20 rounded-xl border border-white/10 bg-obsidian/70 px-3 py-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-champagne/50"
+                          />
+                          <button onClick={() => addOwnership(v.venture_id)} data-testid={`admin-ownership-add-${v.venture_id}`} className="rounded-xl bg-champagne/15 border border-champagne/30 text-champagne px-3.5 hover:bg-champagne hover:text-obsidian transition-colors duration-300" aria-label="Add ownership">
+                            <Plus size={15} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {tab === "insights" && (
           <div className="mt-10" data-testid="admin-insights-list">
             <button
@@ -400,6 +726,66 @@ export default function AdminPage() {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {ventureEditor && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-obsidian/80 backdrop-blur-md sm:p-6"
+            onClick={() => setVentureEditor(null)}
+            data-testid="venture-editor-overlay"
+          >
+            <motion.div
+              initial={{ y: 60, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 60, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              data-testid="venture-editor-modal"
+              className="w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-white/10 bg-charcoal p-7 sm:p-10"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="text-xl font-extrabold text-white tracking-tight">
+                  {ventureEditor.venture_id ? "Edit Venture" : "New Venture"}
+                </h3>
+                <button onClick={() => setVentureEditor(null)} data-testid="venture-editor-close" className="rounded-full border border-white/10 p-2 text-gray-400 hover:text-white transition-colors duration-300" aria-label="Close">
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="mt-6 space-y-4">
+                <input value={ventureEditor.name} onChange={(e) => setVentureEditor((s) => ({ ...s, name: e.target.value }))} placeholder="Venture name" data-testid="venture-editor-name" className={inputCls} />
+                <div className="grid grid-cols-2 gap-4">
+                  <input value={ventureEditor.industry} onChange={(e) => setVentureEditor((s) => ({ ...s, industry: e.target.value }))} placeholder="Industry" data-testid="venture-editor-industry" className={inputCls} />
+                  <select value={ventureEditor.stage} onChange={(e) => setVentureEditor((s) => ({ ...s, stage: e.target.value }))} data-testid="venture-editor-stage" className={inputCls}>
+                    {VENTURE_STAGES.map((s) => (<option key={s} value={s}>{s}</option>))}
+                  </select>
+                  <input value={ventureEditor.capital_required} onChange={(e) => setVentureEditor((s) => ({ ...s, capital_required: e.target.value }))} placeholder="Capital required (e.g. ₹50L – ₹1Cr)" data-testid="venture-editor-capital" className={inputCls} />
+                  <input value={ventureEditor.founder_name} onChange={(e) => setVentureEditor((s) => ({ ...s, founder_name: e.target.value }))} placeholder="Founder name" data-testid="venture-editor-founder" className={inputCls} />
+                </div>
+                <textarea value={ventureEditor.description} onChange={(e) => setVentureEditor((s) => ({ ...s, description: e.target.value }))} placeholder="What this venture does (shown to verified investors if visible)" rows={4} data-testid="venture-editor-description" className={`${inputCls} resize-none`} />
+                <div className="grid grid-cols-2 gap-4 items-center">
+                  <select value={ventureEditor.status} onChange={(e) => setVentureEditor((s) => ({ ...s, status: e.target.value }))} data-testid="venture-editor-status" className={inputCls}>
+                    {VENTURE_STATUSES.map((s) => (<option key={s} value={s}>{s}</option>))}
+                  </select>
+                  <label className="flex items-center gap-3 text-sm text-gray-300 cursor-pointer">
+                    <input type="checkbox" checked={!!ventureEditor.visible_to_investors} onChange={(e) => setVentureEditor((s) => ({ ...s, visible_to_investors: e.target.checked }))} data-testid="venture-editor-visible" className="h-4 w-4 accent-[#E6C280]" />
+                    Visible to verified investors
+                  </label>
+                </div>
+                <button
+                  onClick={saveVenture}
+                  data-testid="venture-editor-save"
+                  className="w-full rounded-full bg-champagne text-obsidian font-bold tracking-wide px-8 py-3.5 text-sm hover:bg-champagneBright transition-colors duration-300"
+                >
+                  SAVE VENTURE
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {editor && (
