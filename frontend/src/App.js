@@ -18,6 +18,7 @@ import ContactPage from "@/pages/ContactPage";
 import AccountPage from "@/pages/AccountPage";
 import AdminPage from "@/pages/AdminPage";
 import OpportunitiesPage from "@/pages/OpportunitiesPage";
+import FounderPortalPage from "@/pages/FounderPortalPage";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -46,6 +47,7 @@ function AppRouter() {
       <Route path="/account" element={<AccountPage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/opportunities" element={<OpportunitiesPage />} />
+      <Route path="/my-venture" element={<FounderPortalPage />} />
       <Route path="*" element={<HomePage />} />
     </Routes>
   );

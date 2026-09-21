@@ -160,6 +160,25 @@ export default function OpportunitiesPage() {
                       </div>
                     </div>
                   )}
+                  {(o.documents || []).length > 0 && (
+                    <div className="mt-7 space-y-2" data-testid={`opportunity-documents-${o.venture_id}`}>
+                      <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-gray-600">Documents</p>
+                      {o.documents.map((d) => (
+                        <a
+                          key={d.document_id}
+                          href={`${API}/documents/${d.document_id}/download`}
+                          data-testid={`opportunity-doc-${d.document_id}`}
+                          className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-obsidian/60 px-4 py-2.5 text-xs text-gray-300 hover:border-champagne/40 hover:text-white transition-colors duration-300"
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#E6C280" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                          <span className="truncate">{d.filename}</span>
+                          <span className="ml-auto font-mono text-[9px] uppercase tracking-[0.15em] text-gray-600 shrink-0">
+                            {d.kind} · {(d.size / 1024).toFixed(0)} KB
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
                   <button
                     onClick={() => !o.my_interest && setInterestFor(o)}
                     disabled={o.my_interest}

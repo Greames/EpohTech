@@ -94,7 +94,14 @@ export default function AccountPage() {
                 <p className="text-xs text-gray-500 mt-1" data-testid="account-user-email">{effectiveUser.email}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
+              <Link
+                to="/my-venture"
+                data-testid="account-my-venture-link"
+                className="inline-flex items-center gap-2 rounded-full border border-champagne/30 text-champagne px-5 py-2.5 text-xs font-bold hover:bg-champagne hover:text-obsidian transition-colors duration-300"
+              >
+                My Venture
+              </Link>
               {isAdmin && (
                 <Link
                   to="/admin"

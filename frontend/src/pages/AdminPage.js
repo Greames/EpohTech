@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, RefreshCw, Plus, Pencil, Trash2, X, Download, Eye, EyeOff, LayoutDashboard,
-  Building2, Sparkles, CalendarClock, Globe,
+  Building2, Sparkles, CalendarClock, Globe, FileText, ListTodo, BarChart3,
 } from "lucide-react";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { toast } from "sonner";
 import axios, { API } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
@@ -24,8 +25,9 @@ const TABS = [
 ];
 const EMPTY_VENTURE = {
   name: "", industry: "", stage: "Validation", description: "",
-  capital_required: "", founder_name: "", status: "active", visible_to_investors: false,
+  capital_required: "", founder_name: "", founder_email: "", status: "active", visible_to_investors: false,
 };
+const DOC_KINDS = ["deck", "financial", "document"];
 
 const statusCls = (s) =>
   s === "approved" || s === "verified"
@@ -217,6 +219,111 @@ export default function AdminPage() {
       setDigestBusy(false);
     }
   };
+
+  const [docDrafts, setDocDrafts] = useState({});
+  const [kpiDrafts, setKpiDrafts] = useState({});
+  const [taskDrafts, setTaskDrafts] = useState({});
+
+  const uploadVentureDoc = async (ventureId, file) => {
+    if (!file) return;
+    const kind = (docDrafts[ventureId] || {}).kind || "document";
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      await axios.post(`${API}/admin/ventures/${ventureId}/documents?kind=${kind}`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      toast.success("Document uploaded");
+      loadAll();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Upload failed");
+    }
+  };
+
+  const removeDocument = async (id) => {
+    try {
+      await axios.delete(`${API}/admin/documents/${id}`);
+      toast.success("Document removed");
+      loadAll();
+    } catch {
+      toast.error("Could not remove document");
+    }
+  };
+
+  const addKpi = async (ventureId) => {
+    const draft = kpiDrafts[ventureId] || {};
+    if (!draft.month || draft.revenue === "" || draft.revenue === undefined) {
+      toast.error("Month and revenue are required");
+      return;
+    }
+    try {
+      await axios.post(`${API}/admin/ventures/${ventureId}/kpis`, {
+        month: draft.month,
+        revenue: parseFloat(draft.revenue) || 0,
+        growth: draft.growth === "" || draft.growth === undefined ? null : parseFloat(draft.growth),
+      });
+      setKpiDrafts((d) => ({ ...d, [ventureId]: {} }));
+      loadAll();
+    } catch {
+      toast.error("Could not add KPI");
+    }
+  };
+
+  const removeKpi = async (id) => {
+    try {
+      await axios.delete(`${API}/admin/kpis/${id}`);
+      loadAll();
+    } catch {
+      toast.error("Could not delete KPI");
+    }
+  };
+
+  const addTask = async (ventureId) => {
+    const draft = taskDrafts[ventureId] || {};
+    if (!draft.title?.trim()) {
+      toast.error("Task title is required");
+      return;
+    }
+    try {
+      await axios.post(`${API}/admin/ventures/${ventureId}/tasks`, {
+        title: draft.title, due_date: draft.due_date || "", done: false,
+      });
+      setTaskDrafts((d) => ({ ...d, [ventureId]: {} }));
+      loadAll();
+    } catch {
+      toast.error("Could not add task");
+    }
+  };
+
+  const toggleTaskAdmin = async (t) => {
+    try {
+      await axios.patch(`${API}/admin/tasks/${t.task_id}`, {
+        title: t.title, due_date: t.due_date || "", done: !t.done,
+      });
+      loadAll();
+    } catch {
+      toast.error("Could not update task");
+    }
+  };
+
+  const removeTask = async (id) => {
+    try {
+      await axios.delete(`${API}/admin/tasks/${id}`);
+      loadAll();
+    } catch {
+      toast.error("Could not delete task");
+    }
+  };
+
+  const portfolioSeries = Object.values(
+    ventures
+      .flatMap((v) => (v.kpis || []))
+      .reduce((acc, k) => {
+        acc[k.month] = acc[k.month] || { month: k.month, revenue: 0 };
+        acc[k.month].revenue += Number(k.revenue) || 0;
+        return acc;
+      }, {})
+  ).sort((a, b) => a.month.localeCompare(b.month));
 
   const patchStatus = async (kind, id, status) => {
     try {
@@ -417,6 +524,40 @@ export default function AdminPage() {
           </div>
         )}
 
+        {tab === "overview" && (
+          <div className="mt-6 rounded-3xl border border-white/5 bg-charcoal/60 p-7" data-testid="admin-portfolio-chart">
+            <h3 className="text-lg font-bold text-white flex items-center gap-3">
+              <BarChart3 size={18} className="text-champagne" /> Portfolio Revenue
+            </h3>
+            {portfolioSeries.length === 0 ? (
+              <p className="mt-3 text-xs text-gray-500 leading-relaxed">
+                Add monthly KPIs on the Ventures tab to see the portfolio revenue curve here.
+              </p>
+            ) : (
+              <div className="mt-5 h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={portfolioSeries} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
+                    <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
+                    <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 10, fontFamily: "JetBrains Mono" }} axisLine={false} tickLine={false} />
+                    <YAxis
+                      tick={{ fill: "#6B7280", fontSize: 10, fontFamily: "JetBrains Mono" }}
+                      axisLine={false}
+                      tickLine={false}
+                      tickFormatter={(v) => `₹${v >= 100000 ? `${(v / 100000).toFixed(1)}L` : v >= 1000 ? `${(v / 1000).toFixed(0)}K` : v}`}
+                    />
+                    <Tooltip
+                      contentStyle={{ background: "#13151A", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
+                      labelStyle={{ color: "#E6C280", fontFamily: "JetBrains Mono" }}
+                      formatter={(v) => [`₹${Number(v).toLocaleString("en-IN")}`, "Revenue"]}
+                    />
+                    <Line type="monotone" dataKey="revenue" stroke="#E6C280" strokeWidth={2.5} dot={{ r: 4, fill: "#E6C280", strokeWidth: 0 }} activeDot={{ r: 6, fill: "#F5D796" }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+        )}
+
         {tab === "founders" && (
           <div className="mt-10 space-y-5" data-testid="admin-founder-list">
             {founders.length === 0 && <p className="text-gray-500 text-sm">No founder applications yet.</p>}
@@ -553,6 +694,52 @@ export default function AdminPage() {
                       </div>
                     </div>
 
+                    <div className="mt-6" data-testid={`admin-venture-kpis-${v.venture_id}`}>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
+                        <BarChart3 size={12} className="text-champagne" /> Portfolio KPIs
+                      </p>
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        {(v.kpis || []).map((k) => (
+                          <span key={k.kpi_id} data-testid={`admin-kpi-${k.kpi_id}`} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-obsidian/60 px-4 py-2 text-xs">
+                            <span className="font-mono text-gray-500">{k.month}</span>
+                            <span className="text-champagne font-bold">₹{Number(k.revenue).toLocaleString("en-IN")}</span>
+                            {k.growth !== null && k.growth !== undefined && (
+                              <span className={k.growth >= 0 ? "text-emerald-400" : "text-red-400"}>{k.growth >= 0 ? "+" : ""}{k.growth}%</span>
+                            )}
+                            <button onClick={() => removeKpi(k.kpi_id)} data-testid={`admin-kpi-delete-${k.kpi_id}`} className="text-gray-600 hover:text-red-400 transition-colors duration-300" aria-label="Delete KPI">
+                              <Trash2 size={11} />
+                            </button>
+                          </span>
+                        ))}
+                        <input
+                          value={(kpiDrafts[v.venture_id] || {}).month || ""}
+                          onChange={(e) => setKpiDrafts((d) => ({ ...d, [v.venture_id]: { ...(d[v.venture_id] || {}), month: e.target.value } }))}
+                          placeholder="2026-09"
+                          data-testid={`admin-kpi-month-${v.venture_id}`}
+                          className="w-24 rounded-xl border border-white/10 bg-obsidian/70 px-3 py-2 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-champagne/50"
+                        />
+                        <input
+                          type="number"
+                          value={(kpiDrafts[v.venture_id] || {}).revenue || ""}
+                          onChange={(e) => setKpiDrafts((d) => ({ ...d, [v.venture_id]: { ...(d[v.venture_id] || {}), revenue: e.target.value } }))}
+                          placeholder="Revenue ₹"
+                          data-testid={`admin-kpi-revenue-${v.venture_id}`}
+                          className="w-28 rounded-xl border border-white/10 bg-obsidian/70 px-3 py-2 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-champagne/50"
+                        />
+                        <input
+                          type="number" step="0.1"
+                          value={(kpiDrafts[v.venture_id] || {}).growth || ""}
+                          onChange={(e) => setKpiDrafts((d) => ({ ...d, [v.venture_id]: { ...(d[v.venture_id] || {}), growth: e.target.value } }))}
+                          placeholder="Growth %"
+                          data-testid={`admin-kpi-growth-${v.venture_id}`}
+                          className="w-24 rounded-xl border border-white/10 bg-obsidian/70 px-3 py-2 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-champagne/50"
+                        />
+                        <button onClick={() => addKpi(v.venture_id)} data-testid={`admin-kpi-add-${v.venture_id}`} className="rounded-xl bg-champagne/15 border border-champagne/30 text-champagne px-3.5 py-2 hover:bg-champagne hover:text-obsidian transition-colors duration-300" aria-label="Add KPI">
+                          <Plus size={15} />
+                        </button>
+                      </div>
+                    </div>
+
                     <div className="mt-7 grid grid-cols-1 lg:grid-cols-2 gap-8">
                       <div data-testid={`admin-venture-milestones-${v.venture_id}`}>
                         <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
@@ -637,6 +824,98 @@ export default function AdminPage() {
                           <button onClick={() => addOwnership(v.venture_id)} data-testid={`admin-ownership-add-${v.venture_id}`} className="rounded-xl bg-champagne/15 border border-champagne/30 text-champagne px-3.5 hover:bg-champagne hover:text-obsidian transition-colors duration-300" aria-label="Add ownership">
                             <Plus size={15} />
                           </button>
+                        </div>
+                      </div>
+
+                      <div data-testid={`admin-venture-tasks-${v.venture_id}`}>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
+                          <ListTodo size={12} className="text-champagne" /> Founder Tasks ({(v.tasks || []).filter((t) => t.done).length}/{(v.tasks || []).length})
+                        </p>
+                        <ul className="mt-3 space-y-2">
+                          {(v.tasks || []).map((t) => {
+                            const overdue = !t.done && t.due_date && t.due_date < new Date().toISOString().slice(0, 10);
+                            return (
+                              <li key={t.task_id} data-testid={`admin-task-${t.task_id}`} className="flex items-center gap-3 rounded-xl border border-white/5 bg-obsidian/60 px-4 py-2.5">
+                                <input type="checkbox" checked={!!t.done} onChange={() => toggleTaskAdmin(t)} data-testid={`admin-task-toggle-${t.task_id}`} className="h-4 w-4 accent-[#E6C280] cursor-pointer" />
+                                <span className={`flex-1 text-sm ${t.done ? "text-gray-600 line-through" : overdue ? "text-red-300" : "text-gray-300"}`}>{t.title}</span>
+                                {t.due_date && <span className={`font-mono text-[9px] ${overdue ? "text-red-400" : "text-gray-600"}`}>{t.due_date}</span>}
+                                <button onClick={() => removeTask(t.task_id)} data-testid={`admin-task-delete-${t.task_id}`} className="text-gray-600 hover:text-red-400 transition-colors duration-300" aria-label="Delete task">
+                                  <Trash2 size={13} />
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            value={(taskDrafts[v.venture_id] || {}).title || ""}
+                            onChange={(e) => setTaskDrafts((d) => ({ ...d, [v.venture_id]: { ...(d[v.venture_id] || {}), title: e.target.value } }))}
+                            placeholder="Assign a task to the founder"
+                            data-testid={`admin-task-input-${v.venture_id}`}
+                            className="flex-1 rounded-xl border border-white/10 bg-obsidian/70 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-champagne/50"
+                          />
+                          <input
+                            type="date"
+                            value={(taskDrafts[v.venture_id] || {}).due_date || ""}
+                            onChange={(e) => setTaskDrafts((d) => ({ ...d, [v.venture_id]: { ...(d[v.venture_id] || {}), due_date: e.target.value } }))}
+                            data-testid={`admin-task-date-${v.venture_id}`}
+                            className="rounded-xl border border-white/10 bg-obsidian/70 px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-champagne/50 [color-scheme:dark]"
+                          />
+                          <button onClick={() => addTask(v.venture_id)} data-testid={`admin-task-add-${v.venture_id}`} className="rounded-xl bg-champagne/15 border border-champagne/30 text-champagne px-3.5 hover:bg-champagne hover:text-obsidian transition-colors duration-300" aria-label="Add task">
+                            <Plus size={15} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div data-testid={`admin-venture-documents-${v.venture_id}`}>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2 flex-wrap">
+                          <FileText size={12} className="text-champagne" /> Documents
+                          {v.visible_to_investors
+                            ? <span className="text-epoh normal-case tracking-normal">· shared with verified investors</span>
+                            : <span className="text-gray-600 normal-case tracking-normal">· hidden until venture is investor-visible</span>}
+                        </p>
+                        <ul className="mt-3 space-y-2">
+                          {(v.documents || []).map((d) => (
+                            <li key={d.document_id} data-testid={`admin-document-${d.document_id}`} className="flex items-center gap-3 rounded-xl border border-white/5 bg-obsidian/60 px-4 py-2.5">
+                              <FileText size={13} className="text-champagne shrink-0" />
+                              <span className="flex-1 text-sm text-gray-300 truncate">{d.filename}</span>
+                              <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-gray-600">{d.kind}</span>
+                              <a href={`${API}/admin/documents/${d.document_id}/download`} data-testid={`admin-document-download-${d.document_id}`} className="text-gray-500 hover:text-champagne transition-colors duration-300" aria-label="Download document">
+                                <Download size={13} />
+                              </a>
+                              <button onClick={() => removeDocument(d.document_id)} data-testid={`admin-document-delete-${d.document_id}`} className="text-gray-600 hover:text-red-400 transition-colors duration-300" aria-label="Delete document">
+                                <Trash2 size={13} />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-3 flex gap-2 items-center">
+                          <select
+                            value={(docDrafts[v.venture_id] || {}).kind || "document"}
+                            onChange={(e) => setDocDrafts((d) => ({ ...d, [v.venture_id]: { kind: e.target.value } }))}
+                            data-testid={`admin-document-kind-${v.venture_id}`}
+                            className="rounded-xl border border-white/10 bg-obsidian px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-champagne/50"
+                          >
+                            {DOC_KINDS.map((k) => (<option key={k} value={k}>{k}</option>))}
+                          </select>
+                          <label
+                            htmlFor={`doc-file-${v.venture_id}`}
+                            data-testid={`admin-document-upload-${v.venture_id}`}
+                            className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-dashed border-white/15 bg-obsidian/70 px-3.5 py-2.5 text-xs text-gray-500 hover:border-champagne/50 hover:text-gray-300 cursor-pointer transition-colors duration-300"
+                          >
+                            <FileText size={13} className="text-champagne" /> Upload deck / financial / doc
+                          </label>
+                          <input
+                            id={`doc-file-${v.venture_id}`}
+                            type="file"
+                            accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.csv"
+                            className="hidden"
+                            data-testid={`admin-document-file-${v.venture_id}`}
+                            onChange={(e) => {
+                              uploadVentureDoc(v.venture_id, e.target.files?.[0]);
+                              e.target.value = "";
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
@@ -763,6 +1042,7 @@ export default function AdminPage() {
                   </select>
                   <input value={ventureEditor.capital_required} onChange={(e) => setVentureEditor((s) => ({ ...s, capital_required: e.target.value }))} placeholder="Capital required (e.g. ₹50L – ₹1Cr)" data-testid="venture-editor-capital" className={inputCls} />
                   <input value={ventureEditor.founder_name} onChange={(e) => setVentureEditor((s) => ({ ...s, founder_name: e.target.value }))} placeholder="Founder name" data-testid="venture-editor-founder" className={inputCls} />
+                  <input value={ventureEditor.founder_email || ""} onChange={(e) => setVentureEditor((s) => ({ ...s, founder_email: e.target.value }))} placeholder="Founder Google email (links Founder Portal)" data-testid="venture-editor-founder-email" className={inputCls} />
                 </div>
                 <textarea value={ventureEditor.description} onChange={(e) => setVentureEditor((s) => ({ ...s, description: e.target.value }))} placeholder="What this venture does (shown to verified investors if visible)" rows={4} data-testid="venture-editor-description" className={`${inputCls} resize-none`} />
                 <div className="grid grid-cols-2 gap-4 items-center">

@@ -743,6 +743,7 @@ class VentureIn(BaseModel):
     description: Optional[str] = ""
     capital_required: Optional[str] = ""
     founder_name: Optional[str] = ""
+    founder_email: Optional[str] = ""
     status: Optional[str] = "active"
     visible_to_investors: bool = False
 
@@ -770,6 +771,12 @@ async def admin_list_ventures(request: Request):
     for v in ventures:
         v["milestones"] = await db.milestones.find({"venture_id": v["venture_id"]}, {"_id": 0}).sort("created_at", 1).to_list(200)
         v["ownership"] = await db.ownership.find({"venture_id": v["venture_id"]}, {"_id": 0}).to_list(100)
+        v["kpis"] = await db.kpis.find({"venture_id": v["venture_id"]}, {"_id": 0}).sort("month", 1).to_list(100)
+        v["tasks"] = await db.tasks.find({"venture_id": v["venture_id"]}, {"_id": 0}).sort("created_at", 1).to_list(200)
+        v["documents"] = await db.documents.find(
+            {"venture_id": v["venture_id"], "is_deleted": False},
+            {"_id": 0, "storage_path": 0},
+        ).sort("created_at", -1).to_list(100)
         v["interests_count"] = await db.interests.count_documents({"venture_id": v["venture_id"]})
     return {"ventures": ventures}
 
@@ -890,6 +897,10 @@ async def list_opportunities(request: Request):
         total = await db.milestones.count_documents({"venture_id": v["venture_id"]})
         done = await db.milestones.count_documents({"venture_id": v["venture_id"], "done": True})
         mine = await db.interests.find_one({"venture_id": v["venture_id"], "investor_email": user["email"]})
+        docs = await db.documents.find(
+            {"venture_id": v["venture_id"], "is_deleted": False},
+            {"_id": 0, "document_id": 1, "filename": 1, "kind": 1, "size": 1},
+        ).to_list(50)
         out.append({
             "venture_id": v["venture_id"],
             "name": v["name"],
@@ -901,8 +912,35 @@ async def list_opportunities(request: Request):
             "milestones_total": total,
             "milestones_done": done,
             "my_interest": bool(mine),
+            "documents": docs,
         })
     return {"opportunities": out}
+
+
+async def generate_interest_alert(user: dict, venture: dict, note: str) -> str:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage, TextDelta, StreamDone
+
+    chat = LlmChat(
+        api_key=EMERGENT_KEY,
+        session_id=f"jarvis-alert-{uuid.uuid4().hex[:8]}",
+        system_message=(
+            "You are JARVIS, internal operations AI of Second Salary Capital, a venture studio. "
+            "In 2-3 sharp sentences, summarize a new investor-interest event for the founding team "
+            "and suggest one concrete next step. No greeting, no sign-off, no fluff."
+        ),
+    ).with_model("openai", "gpt-5.4")
+    prompt = (
+        f"Venture: {venture['name']} (industry {venture.get('industry') or 'n/a'}, stage {venture.get('stage') or 'n/a'}, "
+        f"capital required {venture.get('capital_required') or 'TBD'}). "
+        f"Investor: {user.get('name') or 'Unknown'} <{user['email']}>. Note from investor: {note or 'none'}."
+    )
+    parts = []
+    async for ev in chat.stream_message(UserMessage(text=prompt)):
+        if isinstance(ev, TextDelta):
+            parts.append(ev.content)
+        elif isinstance(ev, StreamDone):
+            break
+    return "".join(parts).strip()
 
 
 @api_router.post("/opportunities/{venture_id}/interest")
@@ -925,18 +963,27 @@ async def express_interest(venture_id: str, payload: InterestIn, request: Reques
     }
     await db.interests.insert_one(dict(doc))
     if OWNER_NOTIFY_EMAIL:
+        try:
+            alert = await generate_interest_alert(user, venture, payload.note)
+        except Exception as e:
+            logger.error(f"JARVIS interest alert LLM failed: {e}")
+            alert = ""
+        alert_html = (
+            f'<p style="margin:0 0 18px;font-size:13px;line-height:1.7;color:#F4F5F7;'
+            f'border-left:2px solid #E6C280;padding-left:14px">{escape(alert)}</p>'
+        ) if alert else ""
         notify_html = _email_shell(
             f'Investor interest: {escape(venture["name"])}',
-            _kv_rows({
+            alert_html + _kv_rows({
                 "venture": venture["name"], "investor": user.get("name", ""),
                 "email": user["email"], "note": payload.note or "-",
             }),
         )
-        asyncio.create_task(send_email(
+        await send_email(
             to=OWNER_NOTIFY_EMAIL,
             subject=f'Investor interest in {venture["name"]} — {user.get("name") or user["email"]}',
             html=notify_html,
-        ))
+        )
     return {"status": "success", "interest_id": doc["interest_id"]}
 
 
@@ -1083,6 +1130,190 @@ async def jarvis_scheduler_start():
     if OWNER_NOTIFY_EMAIL:
         asyncio.create_task(_jarvis_loop())
         logger.info("JARVIS daily digest scheduler started (07:00 UTC)")
+
+
+# ---------------- Venture documents, KPIs, tasks, founder portal ----------------
+ALLOWED_DOC_EXT = {"pdf", "ppt", "pptx", "doc", "docx", "xls", "xlsx", "csv"}
+MAX_DOC_SIZE = 25 * 1024 * 1024
+
+
+class KpiIn(BaseModel):
+    month: str
+    revenue: float = 0
+    growth: Optional[float] = None
+
+
+class TaskIn(BaseModel):
+    title: str
+    due_date: Optional[str] = ""
+    done: bool = False
+
+
+class TaskToggle(BaseModel):
+    done: bool
+
+
+@api_router.post("/admin/ventures/{venture_id}/documents")
+async def admin_upload_document(venture_id: str, request: Request, kind: str = "document", file: UploadFile = File(...)):
+    await require_admin(request)
+    if not await db.ventures.find_one({"venture_id": venture_id}):
+        raise HTTPException(status_code=404, detail="Venture not found")
+    if kind not in ("deck", "financial", "document"):
+        kind = "document"
+    ext = (file.filename or "").rsplit(".", 1)[-1].lower() if "." in (file.filename or "") else ""
+    if ext not in ALLOWED_DOC_EXT:
+        raise HTTPException(status_code=400, detail="Allowed: PDF, PPT, DOC, XLS, CSV")
+    data = await file.read()
+    if not data:
+        raise HTTPException(status_code=400, detail="Empty file")
+    if len(data) > MAX_DOC_SIZE:
+        raise HTTPException(status_code=400, detail="File too large (max 25MB)")
+    path = f"{APP_NAME}/venture-docs/{venture_id}/{uuid.uuid4().hex}.{ext}"
+    try:
+        result = await asyncio.to_thread(put_object, path, data, file.content_type or "application/octet-stream")
+    except Exception as e:
+        logger.error(f"Document upload failed: {e}")
+        raise HTTPException(status_code=502, detail="File storage unavailable")
+    doc = {
+        "document_id": f"doc_{uuid.uuid4().hex[:12]}",
+        "venture_id": venture_id,
+        "kind": kind,
+        "filename": file.filename,
+        "size": result["size"],
+        "storage_path": result["path"],
+        "content_type": file.content_type,
+        "is_deleted": False,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.documents.insert_one(dict(doc))
+    return {k: v for k, v in doc.items() if k != "storage_path"}
+
+
+@api_router.delete("/admin/documents/{document_id}")
+async def admin_delete_document(document_id: str, request: Request):
+    await require_admin(request)
+    res = await db.documents.update_one({"document_id": document_id}, {"$set": {"is_deleted": True}})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"status": "success"}
+
+
+async def _stream_document(record) -> Response:
+    try:
+        data, content_type = await asyncio.to_thread(get_object, record["storage_path"])
+    except Exception as e:
+        logger.error(f"Document download failed: {e}")
+        raise HTTPException(status_code=502, detail="File storage unavailable")
+    return Response(
+        content=data,
+        media_type=record.get("content_type") or content_type,
+        headers={"Content-Disposition": f'attachment; filename="{record["filename"]}"'},
+    )
+
+
+@api_router.get("/admin/documents/{document_id}/download")
+async def admin_download_document(document_id: str, request: Request):
+    await require_admin(request)
+    record = await db.documents.find_one({"document_id": document_id, "is_deleted": False}, {"_id": 0})
+    if not record:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return await _stream_document(record)
+
+
+@api_router.get("/documents/{document_id}/download")
+async def investor_download_document(document_id: str, request: Request):
+    await require_verified_investor(request)
+    record = await db.documents.find_one({"document_id": document_id, "is_deleted": False}, {"_id": 0})
+    if not record:
+        raise HTTPException(status_code=404, detail="Document not found")
+    venture = await db.ventures.find_one({"venture_id": record["venture_id"]})
+    if not venture or not venture.get("visible_to_investors"):
+        raise HTTPException(status_code=403, detail="Not available")
+    return await _stream_document(record)
+
+
+@api_router.post("/admin/ventures/{venture_id}/kpis")
+async def admin_add_kpi(venture_id: str, payload: KpiIn, request: Request):
+    await require_admin(request)
+    if not await db.ventures.find_one({"venture_id": venture_id}):
+        raise HTTPException(status_code=404, detail="Venture not found")
+    doc = payload.model_dump()
+    doc.update({
+        "kpi_id": f"kpi_{uuid.uuid4().hex[:12]}",
+        "venture_id": venture_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    await db.kpis.insert_one(dict(doc))
+    return doc
+
+
+@api_router.delete("/admin/kpis/{kpi_id}")
+async def admin_delete_kpi(kpi_id: str, request: Request):
+    await require_admin(request)
+    res = await db.kpis.delete_one({"kpi_id": kpi_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="KPI not found")
+    return {"status": "success"}
+
+
+@api_router.post("/admin/ventures/{venture_id}/tasks")
+async def admin_add_task(venture_id: str, payload: TaskIn, request: Request):
+    await require_admin(request)
+    if not await db.ventures.find_one({"venture_id": venture_id}):
+        raise HTTPException(status_code=404, detail="Venture not found")
+    doc = payload.model_dump()
+    doc.update({
+        "task_id": f"task_{uuid.uuid4().hex[:12]}",
+        "venture_id": venture_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    await db.tasks.insert_one(dict(doc))
+    return doc
+
+
+@api_router.patch("/admin/tasks/{task_id}")
+async def admin_update_task(task_id: str, payload: TaskIn, request: Request):
+    await require_admin(request)
+    res = await db.tasks.update_one({"task_id": task_id}, {"$set": payload.model_dump()})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return await db.tasks.find_one({"task_id": task_id}, {"_id": 0})
+
+
+@api_router.delete("/admin/tasks/{task_id}")
+async def admin_delete_task(task_id: str, request: Request):
+    await require_admin(request)
+    res = await db.tasks.delete_one({"task_id": task_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return {"status": "success"}
+
+
+@api_router.get("/my/venture")
+async def my_venture(request: Request):
+    user = await get_current_user(request)
+    venture = await db.ventures.find_one({"founder_email": user["email"]}, {"_id": 0})
+    if not venture:
+        raise HTTPException(status_code=404, detail="No venture linked to this account yet")
+    venture["milestones"] = await db.milestones.find(
+        {"venture_id": venture["venture_id"]}, {"_id": 0}).sort("created_at", 1).to_list(200)
+    venture["tasks"] = await db.tasks.find(
+        {"venture_id": venture["venture_id"]}, {"_id": 0}).sort("created_at", 1).to_list(200)
+    return venture
+
+
+@api_router.patch("/my/tasks/{task_id}")
+async def my_task_toggle(task_id: str, payload: TaskToggle, request: Request):
+    user = await get_current_user(request)
+    task = await db.tasks.find_one({"task_id": task_id}, {"_id": 0})
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    venture = await db.ventures.find_one({"venture_id": task["venture_id"]})
+    is_admin = user["email"].lower() in ADMIN_EMAILS
+    if not is_admin and (not venture or venture.get("founder_email") != user["email"]):
+        raise HTTPException(status_code=403, detail="Not your venture")
+    await db.tasks.update_one({"task_id": task_id}, {"$set": {"done": payload.done}})
+    return {"status": "success", "task_id": task_id, "done": payload.done}
 
 
 SEED_INSIGHTS = [

@@ -71,17 +71,31 @@ mobile-first. Integrations: Emergent-managed Google sign-in, Resend transactiona
   runs daily 07:00 UTC while the pod is up; runs logged to db.jarvis_runs. Admin Overview has a
   "Send Now" button with inline preview.
 
+## Implemented (2026-09-21, round 4)
+- Venture Documents: admin uploads decks/financials/docs per venture (PDF/PPT/DOC/XLS/CSV, 25MB,
+  object storage, db.documents soft-delete); verified investors see and download them on
+  /opportunities (only for investor-visible ventures); admin download via /api/admin/documents.
+- Portfolio KPIs: monthly revenue + growth% per venture (db.kpis); KPI chips on each venture card;
+  Portfolio Revenue line chart (recharts) on admin Overview aggregating all ventures by month.
+- Interest Alerts: express-interest now triggers an INSTANT AI-written JARVIS alert email to the
+  team inbox (2-3 sentence summary + next step, plain fallback if LLM fails), in addition to the
+  daily digest.
+- Founder Portal: /my-venture — founders sign in with Google; venture linked via founder_email
+  field on the venture (set in admin venture editor); shows stage/status, milestones with overdue
+  flags, and tasks the founder can check off (PATCH /api/my/tasks, owner-or-admin only).
+  Account page links to it.
+
 ## Pending / Notes
 - Live Google OAuth round-trip not tested in-browser (needs a real Google account); all auth paths
-  verified via minted test sessions (admin + verified investor).
+  verified via minted test sessions (admin, verified investor, founder).
 - The daily scheduler runs inside the backend process — if the pod is down at 07:00 UTC that day's
   digest is skipped; the manual Send Now button always works.
 - Test data cleaned; DB starts fresh (insights re-seed automatically if emptied).
 
 ## Backlog
-- P1: Per-venture documents (pitch decks, financials) attached to opportunities for investors.
 - P1: Investor NDA/acknowledgement step before viewing sensitive opportunity details.
-- P2: Portfolio KPI fields on ventures (revenue, growth) with charts in admin.
-- P2: JARVIS expansions — KPI anomaly alerts, weekly investor activity summary, application triage scoring.
+- P1: Venture document visibility per-document (currently all docs follow venture visibility).
+- P2: JARVIS expansions — KPI anomaly alerts, weekly investor summary, application triage scoring.
 - P2: Analytics dashboards (conversion, cost per qualified lead).
 - P2: Dedicated campaign landing pages (/build-with-us, /invest-with-us aliases).
+- P2: Founder-facing document upload (founder shares files back with the studio).
