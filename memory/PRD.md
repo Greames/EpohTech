@@ -93,6 +93,9 @@ mobile-first. Integrations: Emergent-managed Google sign-in, Resend transactiona
   example-only with flexible-structure explanation.
 - Brand guidance confirmed with user: "first salary to parents and God/faith" stays — it is the
   core differentiator of the brand story.
+- "Why It Matters" section on Our Story page: bridges the origin story to each audience —
+  Founders ("We've stood exactly where you're standing") and Investors ("We spent our own money
+  before we'll ever touch yours") with proof-point bullets and CTAs.
 
 ## Pending / Notes
 - Live Google OAuth round-trip not tested in-browser (needs a real Google account); all auth paths

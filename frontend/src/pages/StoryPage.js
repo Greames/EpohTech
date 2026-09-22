@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
 import OriginStoryTimeline from "@/components/OriginStoryTimeline";
+import StoryMeaningSection from "@/components/StoryMeaningSection";
 
 const PROCESS = ["Idea", "Screen", "Market Research", "Validation", "Founder", "Business Model", "Capital", "Build", "Launch", "Traction", "Scale", "Follow-On Capital", "Exit / Spin-Off / Long-Term"];
 
@@ -31,6 +32,7 @@ export default function StoryPage() {
       </div>
 
       <OriginStoryTimeline />
+      <StoryMeaningSection />
 
       <section className="py-24 md:py-32 border-t border-white/5" data-testid="philosophy-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
