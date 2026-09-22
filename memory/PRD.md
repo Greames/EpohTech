@@ -99,6 +99,14 @@ mobile-first. Integrations: Emergent-managed Google sign-in, Resend transactiona
   built repeatedly." — Second Salary Capital operating-framework card connected to Founders
   (leadership & execution), Investors (capital & strategy), EPOHTECH (technology & product),
   flowing into Company Building → New Ventures → Scale → Liquidity/Exit strip.
+  Connectors DRAW THEMSELVES on scroll (scaleY/scaleX whileInView) with staggered flow chips.
+- Investor FAQ on /investors: 7-question accordion (ticket sizes, choosing ventures, documentation,
+  returns/no-guarantees, ownership structures, post-registration flow, progress tracking).
+- Team page at /team (nav + footer linked): Tulasi Reddy — Founder (monogram card, two-salary quote,
+  role), EPOHTECH technology-partner card, "You? — Next Founder" recruitment card with Build CTA.
+  Photos/names of additional founders can be dropped in when provided.
+- WhatsApp chat button: floating green button on every page → wa.me/919640108029 with pre-filled
+  greeting. Data-testid whatsapp-chat-button.
 
 ## Pending / Notes
 - Live Google OAuth round-trip not tested in-browser (needs a real Google account); all auth paths

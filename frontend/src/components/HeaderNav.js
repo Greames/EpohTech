@@ -11,6 +11,7 @@ const LINKS = [
   { label: "What We Support", path: "/support" },
   { label: "EPOHTECH", path: "/epohtech" },
   { label: "Our Story", path: "/story" },
+  { label: "Team", path: "/team" },
   { label: "Insights", path: "/insights" },
   { label: "Contact", path: "/contact" },
 ];
@@ -53,14 +54,14 @@ export default function HeaderNav() {
           </span>
         </Link>
 
-        <nav className="hidden xl:flex items-center gap-7" data-testid="nav-desktop">
+        <nav className="hidden xl:flex items-center gap-5" data-testid="nav-desktop">
           {LINKS.slice(1).map((l) => (
             <NavLink
               key={l.path}
               to={l.path}
               data-testid={`nav-link-${l.label.toLowerCase().replace(/\s+/g, "-")}`}
               className={({ isActive }) =>
-                `text-[13px] font-medium tracking-wide transition-colors duration-300 ${
+                `text-xs font-medium tracking-wide whitespace-nowrap transition-colors duration-300 ${
                   isActive ? "text-champagne" : "text-gray-400 hover:text-white"
                 }`
               }

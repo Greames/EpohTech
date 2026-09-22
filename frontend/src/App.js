@@ -19,6 +19,8 @@ import AccountPage from "@/pages/AccountPage";
 import AdminPage from "@/pages/AdminPage";
 import OpportunitiesPage from "@/pages/OpportunitiesPage";
 import FounderPortalPage from "@/pages/FounderPortalPage";
+import TeamPage from "@/pages/TeamPage";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -35,21 +37,25 @@ function AppRouter() {
     return <AuthCallback />;
   }
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/build" element={<BuildPage />} />
-      <Route path="/investors" element={<InvestorsPage />} />
-      <Route path="/support" element={<SupportPage />} />
-      <Route path="/epohtech" element={<EpohTechPage />} />
-      <Route path="/story" element={<StoryPage />} />
-      <Route path="/insights" element={<InsightsPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/account" element={<AccountPage />} />
-      <Route path="/admin" element={<AdminPage />} />
-      <Route path="/opportunities" element={<OpportunitiesPage />} />
-      <Route path="/my-venture" element={<FounderPortalPage />} />
-      <Route path="*" element={<HomePage />} />
-    </Routes>
+    <>
+      <WhatsAppButton />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/build" element={<BuildPage />} />
+        <Route path="/investors" element={<InvestorsPage />} />
+        <Route path="/support" element={<SupportPage />} />
+        <Route path="/epohtech" element={<EpohTechPage />} />
+        <Route path="/story" element={<StoryPage />} />
+        <Route path="/team" element={<TeamPage />} />
+        <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/account" element={<AccountPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/opportunities" element={<OpportunitiesPage />} />
+        <Route path="/my-venture" element={<FounderPortalPage />} />
+        <Route path="*" element={<HomePage />} />
+      </Routes>
+    </>
   );
 }
 

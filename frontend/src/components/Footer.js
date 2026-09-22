@@ -98,6 +98,7 @@ export default function Footer() {
               items={[
                 { label: "EPOHTECH", path: "/epohtech" },
                 { label: "Our Story", path: "/story" },
+                { label: "Team", path: "/team" },
                 { label: "Contact", path: "/contact" },
                 { label: "Account", path: "/account" },
               ]}

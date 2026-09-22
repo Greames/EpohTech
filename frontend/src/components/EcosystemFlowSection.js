@@ -61,14 +61,36 @@ export default function EcosystemFlowSection() {
         </Reveal>
 
         <div className="hidden lg:flex justify-center" aria-hidden="true">
-          <div className="h-10 w-px bg-gradient-to-b from-champagne/50 to-white/10" />
+          <motion.div
+            initial={{ scaleY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transformOrigin: "top" }}
+            className="h-10 w-px bg-gradient-to-b from-champagne/50 to-white/10"
+          />
         </div>
-        <div className="hidden lg:block max-w-4xl mx-auto h-px bg-white/10" aria-hidden="true" />
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="hidden lg:block max-w-4xl mx-auto h-px bg-white/10"
+          aria-hidden="true"
+        />
 
         <div className="mt-10 lg:mt-0 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {PARTIES.map((p, i) => (
             <Reveal key={p.name} delay={0.2 + i * 0.1}>
-              <div className="hidden lg:block h-10 w-px bg-white/10 mx-auto" aria-hidden="true" />
+              <motion.div
+                initial={{ scaleY: 0 }}
+                whileInView={{ scaleY: 1 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.5, delay: 0.75 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformOrigin: "top" }}
+                className="hidden lg:block h-10 w-px bg-white/10 mx-auto"
+                aria-hidden="true"
+              />
               <motion.div
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.3 }}
@@ -100,13 +122,18 @@ export default function EcosystemFlowSection() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               {FLOW.map((step, i) => (
                 <div key={step} className="flex items-center gap-3" data-testid={`ecosystem-flow-${step.toLowerCase().replace(/[^a-z]+/g, "-")}`}>
-                  <span className={`rounded-full px-5 py-2.5 font-mono text-[10px] sm:text-xs uppercase tracking-[0.18em] border ${
+                  <motion.span
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ duration: 0.5, delay: 0.15 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+                    className={`rounded-full px-5 py-2.5 font-mono text-[10px] sm:text-xs uppercase tracking-[0.18em] border ${
                     i === FLOW.length - 1
                       ? "border-champagne bg-champagne text-obsidian font-bold"
                       : "border-white/10 bg-white/[0.03] text-gray-300"
                   }`}>
                     {step}
-                  </span>
+                  </motion.span>
                   {i < FLOW.length - 1 && <ArrowRight size={14} className="text-gray-600" />}
                 </div>
               ))}
