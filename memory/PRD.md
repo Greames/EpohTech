@@ -93,9 +93,12 @@ mobile-first. Integrations: Emergent-managed Google sign-in, Resend transactiona
   example-only with flexible-structure explanation.
 - Brand guidance confirmed with user: "first salary to parents and God/faith" stays — it is the
   core differentiator of the brand story.
-- "Why It Matters" section on Our Story page: bridges the origin story to each audience —
-  Founders ("We've stood exactly where you're standing") and Investors ("We spent our own money
-  before we'll ever touch yours") with proof-point bullets and CTAs.
+- "Why It Matters" section on Our Story page: REMOVED per user feedback (don't force-connect the
+  origin story to the business). StoryMeaningSection component deleted.
+- Ecosystem diagram section on homepage (after What We Do): "One studio. Four forces. Companies,
+  built repeatedly." — Second Salary Capital operating-framework card connected to Founders
+  (leadership & execution), Investors (capital & strategy), EPOHTECH (technology & product),
+  flowing into Company Building → New Ventures → Scale → Liquidity/Exit strip.
 
 ## Pending / Notes
 - Live Google OAuth round-trip not tested in-browser (needs a real Google account); all auth paths

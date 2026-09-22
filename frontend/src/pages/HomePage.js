@@ -5,6 +5,7 @@ import HeroMetricCounters from "@/components/HeroMetricCounters";
 import OriginStoryTimeline from "@/components/OriginStoryTimeline";
 import WhatWeDoGrid from "@/components/WhatWeDoGrid";
 import ValueFlowSection from "@/components/ValueFlowSection";
+import EcosystemFlowSection from "@/components/EcosystemFlowSection";
 import SupportEcosystemGrid from "@/components/SupportEcosystemGrid";
 import EditorialMarquee from "@/components/EditorialMarquee";
 import EpohTechSection from "@/components/EpohTechSection";
@@ -22,6 +23,7 @@ export default function HomePage() {
       <OriginStoryTimeline />
       <EditorialMarquee />
       <WhatWeDoGrid />
+      <EcosystemFlowSection />
       <ValueFlowSection />
       <SupportEcosystemGrid compact />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 mb-8 text-right">
