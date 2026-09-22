@@ -85,6 +85,15 @@ mobile-first. Integrations: Emergent-managed Google sign-in, Resend transactiona
   flags, and tasks the founder can check off (PATCH /api/my/tasks, owner-or-admin only).
   Account page links to it.
 
+## Implemented (2026-09-22)
+- Revenue Model section ("How value flows through the ecosystem") on the homepage (after What We Do)
+  and on the For Investors page: Founders (15–40% equity + salary once funded + exit wealth),
+  Investors (choose ventures, returns via exits/spin-offs/dividends, no guaranteed returns),
+  Studio (anchor equity, no fee-first model) + illustrative 60/25/15 equity bar marked as
+  example-only with flexible-structure explanation.
+- Brand guidance confirmed with user: "first salary to parents and God/faith" stays — it is the
+  core differentiator of the brand story.
+
 ## Pending / Notes
 - Live Google OAuth round-trip not tested in-browser (needs a real Google account); all auth paths
   verified via minted test sessions (admin, verified investor, founder).

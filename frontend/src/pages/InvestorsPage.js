@@ -1,4 +1,5 @@
 import InvestorRegistrationForm from "@/components/InvestorRegistrationForm";
+import ValueFlowSection from "@/components/ValueFlowSection";
 import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
 import { FileSearch, Users2, TrendingUp, MessageSquare } from "lucide-react";
 
@@ -41,6 +42,7 @@ export default function InvestorsPage() {
           <InvestorRegistrationForm />
         </div>
       </div>
+      <ValueFlowSection />
     </div>
   );
 }
