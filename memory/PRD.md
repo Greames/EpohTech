@@ -62,8 +62,9 @@ legal pages dated September 2026; /epohtech dedicated page live (₹1.5 Cr / 2 y
 investment story, capabilities, founder + investor panels; linked from homepage, about, portfolio,
 footer).
 STILL PLACEHOLDER: [phone], [LinkedIn URL].
-INSIGHTS: 7 articles in DB incl. "Plan In, Price Out: How the Volt & Valve Estimator Works"
-(category: Portfolio, published 2026-09-25 via admin API).
+INSIGHTS: 8 articles in DB — incl. "Plan In, Price Out: How the Volt & Valve Estimator Works" and
+"One District at a Time: The Dawn Fresh Franchise Model" (both category: Portfolio, published
+2026-09-25). Both 2026 launches now have their own story live.
 FILLED (2026-09-25, later): Company 1 = Dawn Fresh — "Wholesale meat distribution to restaurants
 from a single processing unit — franchise model planned, 1–2 units per district (every 20–30 km)";
 Company 2 = Volt & Valve — "Plumbing, electrical and painting works for new homes and commercial
