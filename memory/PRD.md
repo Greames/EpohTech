@@ -61,10 +61,10 @@ provided — confirm not a typo of "reddy"); city = Hyderabad everywhere incl. e
 legal pages dated September 2026; /epohtech dedicated page live (₹1.5 Cr / 2 years / less
 investment story, capabilities, founder + investor panels; linked from homepage, about, portfolio,
 footer).
-STILL PLACEHOLDER: [phone], [LinkedIn URL], [Company 1 name], [Company 2 name + one-line description].
-FILLED (2026-09-25, later): Company 1 description = "Wholesale meat distribution to restaurants
-from a single processing unit — franchise model planned, 1–2 units per district (every 20–30 km)"
-(portfolio page + homepage preview). Company 1 NAME still bracketed.
+STILL PLACEHOLDER: [phone], [LinkedIn URL], Volt & Valve one-line description.
+FILLED (2026-09-25, later): Company 1 = Dawn Fresh — "Wholesale meat distribution to restaurants
+from a single processing unit — franchise model planned, 1–2 units per district (every 20–30 km)";
+Company 2 name = Volt & Valve (description pending).
 NOTE: team notifications still go to tulasi.reddy@theepoh.com (OWNER_NOTIFY_EMAIL) — ask user
 whether to switch to the anvayapartners.in address.
 Legal counsel must review /privacy, /terms, /disclaimer before go-live.

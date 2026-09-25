@@ -8,8 +8,8 @@ const COMPANIES = [
     description: "Technology platform and technology partner to every Anvaya Partners company — ₹1.5 Cr revenue in two years, built capital-efficiently with less investment.",
     year: "Operating",
   },
-  { name: "[Company 1]", description: "Wholesale meat distribution to restaurants from a single processing unit — with a franchise model planned for one to two units per district, roughly every 20–30 km.", year: "2026" },
-  { name: "[Company 2]", description: "[Company 2 — one-line description]", year: "2026" },
+  { name: "Dawn Fresh", description: "Wholesale meat distribution to restaurants from a single processing unit — with a franchise model planned for one to two units per district, roughly every 20–30 km.", year: "2026" },
+  { name: "Volt & Valve", description: "[One-line description]", year: "2026" },
 ];
 
 export default function PortfolioPage() {
