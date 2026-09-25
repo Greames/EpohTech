@@ -31,7 +31,7 @@ export default function DisclaimerPage() {
               or share prices. This website offers no facility to invest or transact online.
             </p>
             <p className="mt-4 text-sm text-gray-400 leading-relaxed">
-              Questions: [email] · [phone] · [City], India. Also see our{" "}
+              Questions: tulasi.reddu@anvayapartners.in · [phone] · Hyderabad, India. Also see our{" "}
               <Link to="/privacy" className="text-champagne underline underline-offset-2">Privacy Policy</Link> and{" "}
               <Link to="/terms" className="text-champagne underline underline-offset-2">Terms of Use</Link>.
             </p>

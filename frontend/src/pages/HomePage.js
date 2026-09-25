@@ -210,14 +210,17 @@ export default function HomePage() {
           </div>
           <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-6">
             <Reveal>
-              <div data-testid="portfolio-preview-epohtech" className="rounded-3xl border border-champagne/25 bg-charcoal/60 p-8 h-full">
+              <Link to="/epohtech" data-testid="portfolio-preview-epohtech" className="group block rounded-3xl border border-champagne/25 bg-charcoal/60 p-8 h-full hover:border-champagne/50 transition-colors duration-500">
                 <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-champagne">Operating · Built by us</span>
                 <h3 className="mt-5 text-xl font-extrabold text-white tracking-tight">EPOHTECH</h3>
                 <p className="mt-3 text-sm text-gray-400 leading-relaxed">
                   Technology platform and partner to all Anvaya Partners companies. ₹1.5 Cr revenue
                   in two years, with less investment.
                 </p>
-              </div>
+                <span className="mt-5 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-champagne group-hover:text-champagneBright transition-colors duration-300">
+                  The EPOHTECH story <ArrowUpRight size={13} />
+                </span>
+              </Link>
             </Reveal>
             {["[Company 1 — one-line description]", "[Company 2 — one-line description]"].map((c, i) => (
               <Reveal key={c} delay={(i + 1) * 0.1}>
@@ -241,7 +244,7 @@ export default function HomePage() {
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-champagne">Leadership</p>
                 <h3 className="mt-3 text-2xl font-extrabold text-white tracking-tight">
-                  [Founder Name] — Founder &amp; Managing Partner
+                  Tulasi Reddy — Founder &amp; Managing Partner
                 </h3>
                 <blockquote className="mt-4 border-l-2 border-champagne/50 pl-5 text-sm sm:text-base text-gray-300 leading-relaxed italic">
                   "A decade of building and integrating enterprise systems for large organisations,

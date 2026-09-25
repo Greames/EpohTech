@@ -20,6 +20,7 @@ import ContactPage from "@/pages/ContactPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import TermsPage from "@/pages/TermsPage";
 import DisclaimerPage from "@/pages/DisclaimerPage";
+import EpohTechPage from "@/pages/EpohTechPage";
 import AccountPage from "@/pages/AccountPage";
 import AdminPage from "@/pages/AdminPage";
 import OpportunitiesPage from "@/pages/OpportunitiesPage";
@@ -56,6 +57,7 @@ function AppRouter() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/disclaimer" element={<DisclaimerPage />} />
+        <Route path="/epohtech" element={<EpohTechPage />} />
         <Route path="/account" element={<AccountPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/opportunities" element={<OpportunitiesPage />} />

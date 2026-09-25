@@ -29,7 +29,7 @@ export default function TeamPage() {
                   AP
                 </span>
                 <div>
-                  <h2 className="text-2xl font-extrabold text-white tracking-tight">[Founder Name]</h2>
+                  <h2 className="text-2xl font-extrabold text-white tracking-tight">Tulasi Reddy</h2>
                   <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.3em] text-champagne">Founder &amp; Managing Partner</p>
                 </div>
               </div>
@@ -38,7 +38,8 @@ export default function TeamPage() {
                 now applying that same discipline to building companies."
               </blockquote>
               <p className="mt-6 text-sm text-gray-400 leading-relaxed">
-                [Founder bio — background, previous companies, areas of focus.]
+                Tulasi leads Anvaya Partners' investment strategy and works hands-on with every
+                company the firm backs — from the first conversation to sustainable revenue.
               </p>
             </div>
           </Reveal>

@@ -106,6 +106,7 @@ export default function Footer() {
               title="Firm"
               items={[
                 { label: "About", path: "/about" },
+                { label: "EPOHTECH", path: "/epohtech" },
                 { label: "Approach", path: "/approach" },
                 { label: "Team", path: "/team" },
                 { label: "Insights", path: "/insights" },
@@ -146,7 +147,7 @@ export default function Footer() {
 
         <div className="mt-8 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between gap-4">
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gray-600">
-            © {new Date().getFullYear()} Anvaya Partners Private Limited · [City], India
+            © {new Date().getFullYear()} Anvaya Partners Private Limited · Hyderabad, India
           </p>
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gray-600">
             Conviction · Partnership · Discipline · Integrity

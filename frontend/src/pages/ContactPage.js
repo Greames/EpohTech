@@ -13,9 +13,9 @@ const labelCls = "block font-mono text-[10px] uppercase tracking-[0.25em] text-g
 const TOPICS = ["General", "Founder Application Question", "Investor Network Question", "Request Deck — Invest in Anvaya Partners", "Press & Media", "Other"];
 
 const CONTACT_ROWS = [
-  { icon: Mail, label: "Email", value: "[email]", testId: "contact-info-email" },
+  { icon: Mail, label: "Email", value: "tulasi.reddu@anvayapartners.in", testId: "contact-info-email" },
   { icon: Phone, label: "Phone", value: "[phone]", testId: "contact-info-phone" },
-  { icon: MapPin, label: "Office", value: "[City], India", testId: "contact-info-city" },
+  { icon: MapPin, label: "Office", value: "Hyderabad, India", testId: "contact-info-city" },
   { icon: Linkedin, label: "LinkedIn", value: "[LinkedIn URL]", testId: "contact-info-linkedin" },
 ];
 

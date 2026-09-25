@@ -33,7 +33,11 @@ export default function PortfolioPage() {
             <Reveal key={c.name} delay={i * 0.1}>
               <div
                 data-testid={`portfolio-company-${i + 1}`}
-                className="group h-full rounded-3xl border border-white/5 bg-charcoal/50 p-8 sm:p-12 hover:border-champagne/25 transition-colors duration-500"
+                className={`group h-full rounded-3xl border p-8 sm:p-12 transition-colors duration-500 ${
+                  c.year === "Operating"
+                    ? "border-champagne/25 bg-charcoal/60 hover:border-champagne/45"
+                    : "border-white/5 bg-charcoal/50 hover:border-champagne/25"
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-champagne">
@@ -43,6 +47,11 @@ export default function PortfolioPage() {
                 </div>
                 <h2 className="mt-8 text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{c.name}</h2>
                 <p className="mt-4 text-gray-400 text-sm sm:text-base leading-relaxed">{c.description}</p>
+                {c.year === "Operating" && (
+                  <Link to="/epohtech" data-testid="portfolio-epohtech-link" className="group mt-5 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-champagne hover:text-champagneBright transition-colors duration-300">
+                    The EPOHTECH story <ArrowUpRight size={13} />
+                  </Link>
+                )}
                 <div className="mt-10 h-px bg-white/5" />
                 <p className="mt-6 text-[13px] text-gray-500 leading-relaxed">
                   Backed by Anvaya Partners' own capital, with hands-on support across strategy,

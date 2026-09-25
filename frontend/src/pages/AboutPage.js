@@ -48,7 +48,7 @@ export default function AboutPage() {
               An early-stage investment firm that does the work.
             </h2>
             <p className="mt-6 text-gray-400 text-base leading-relaxed">
-              Anvaya Partners Private Limited, [City], India. We invest our own capital in early-stage
+              Anvaya Partners Private Limited, Hyderabad, India. We invest our own capital in early-stage
               startups and work hands-on with their founders — on strategy, technology, finance,
               operations and go-to-market.
             </p>
@@ -78,7 +78,10 @@ export default function AboutPage() {
             <p className="mt-4 text-gray-400 text-sm sm:text-base leading-relaxed max-w-2xl">
               Our own technology platform, built capital-efficiently with less investment. EPOHTECH
               is now the technology partner to every Anvaya Partners company — the operator-led
-              model, proven on ourselves first.
+              model, proven on ourselves first.{" "}
+              <Link to="/epohtech" className="text-champagne underline underline-offset-2 hover:text-champagneBright transition-colors duration-300" data-testid="about-epohtech-link">
+                Read the EPOHTECH story
+              </Link>.
             </p>
           </div>
         </Reveal>

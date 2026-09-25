@@ -3,7 +3,7 @@ import { Reveal, Eyebrow } from "@/components/Reveal";
 const SECTIONS = [
   {
     title: "1. Acceptance",
-    body: "By using this website you accept these Terms of Use. If you do not agree, please do not use the website. Anvaya Partners Private Limited, [City], India (\"Anvaya Partners\") operates this website.",
+    body: "By using this website you accept these Terms of Use. If you do not agree, please do not use the website. Anvaya Partners Private Limited, Hyderabad, India (\"Anvaya Partners\") operates this website.",
   },
   {
     title: "2. Informational purpose only",
@@ -31,11 +31,11 @@ const SECTIONS = [
   },
   {
     title: "8. Governing law",
-    body: "These terms are governed by the laws of India. Courts at [City], India have exclusive jurisdiction.",
+    body: "These terms are governed by the laws of India. Courts at Hyderabad, India have exclusive jurisdiction.",
   },
   {
     title: "9. Changes & contact",
-    body: "We may update these terms; the current version is always on this page. Contact: [email] · [phone] · [City], India.",
+    body: "We may update these terms; the current version is always on this page. Contact: tulasi.reddu@anvayapartners.in · [phone] · Hyderabad, India.",
   },
 ];
 
@@ -51,7 +51,7 @@ export default function TermsPage() {
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.25em] text-champagne" data-testid="terms-review-note">
             [To be reviewed by legal counsel]
           </p>
-          <p className="mt-6 text-gray-400 text-sm leading-relaxed">Last updated: [Date].</p>
+          <p className="mt-6 text-gray-400 text-sm leading-relaxed">Last updated: September 2026.</p>
         </Reveal>
         <div className="mt-12 space-y-8">
           {SECTIONS.map((s) => (

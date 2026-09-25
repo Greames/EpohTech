@@ -185,7 +185,7 @@ def _email_shell(title: str, body_html: str) -> str:
         '</td></tr>'
         '<tr><td style="padding:20px 32px;border-top:1px solid #222630">'
         '<p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#64748B">'
-        f'{escape(EMAIL_FROM_NAME)} Private Limited · [City], India — where capital meets founders. '
+        f'{escape(EMAIL_FROM_NAME)} Private Limited · Hyderabad, India — where capital meets founders. '
         'We never ask for passwords, OTPs or card details by email.</p></td></tr>'
         '</table></td></tr></table>'
     )

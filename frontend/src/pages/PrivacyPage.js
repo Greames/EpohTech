@@ -3,7 +3,7 @@ import { Reveal, Eyebrow } from "@/components/Reveal";
 const SECTIONS = [
   {
     title: "1. Who we are",
-    body: "Anvaya Partners Private Limited, [City], India (\"Anvaya Partners\", \"we\", \"us\") operates this website. This Privacy Policy explains how we collect, use, store and protect personal data in line with the Digital Personal Data Protection Act, 2023 (DPDP Act) of India.",
+    body: "Anvaya Partners Private Limited, Hyderabad, India (\"Anvaya Partners\", \"we\", \"us\") operates this website. This Privacy Policy explains how we collect, use, store and protect personal data in line with the Digital Personal Data Protection Act, 2023 (DPDP Act) of India.",
   },
   {
     title: "2. Data we collect",
@@ -15,7 +15,7 @@ const SECTIONS = [
   },
   {
     title: "4. Consent",
-    body: "Every form on this website requires your explicit consent before submission. You may withdraw consent at any time by writing to [email]; withdrawal does not affect processing already lawfully carried out.",
+    body: "Every form on this website requires your explicit consent before submission. You may withdraw consent at any time by writing to tulasi.reddu@anvayapartners.in; withdrawal does not affect processing already lawfully carried out.",
   },
   {
     title: "5. Sharing",
@@ -27,7 +27,7 @@ const SECTIONS = [
   },
   {
     title: "7. Your rights under the DPDP Act, 2023",
-    body: "You may request access to your personal data, its correction or erasure, withdraw consent, nominate a representative, and raise a grievance. Write to our Grievance Officer: [Name], [email]. We will respond within the timelines prescribed by law.",
+    body: "You may request access to your personal data, its correction or erasure, withdraw consent, nominate a representative, and raise a grievance. Write to our Grievance Officer: Tulasi Reddy, tulasi.reddu@anvayapartners.in. We will respond within the timelines prescribed by law.",
   },
   {
     title: "8. Children",
@@ -35,7 +35,7 @@ const SECTIONS = [
   },
   {
     title: "9. Changes & contact",
-    body: "We may update this policy; the current version is always on this page. Contact: [email] · [phone] · [City], India.",
+    body: "We may update this policy; the current version is always on this page. Contact: tulasi.reddu@anvayapartners.in · [phone] · Hyderabad, India.",
   },
 ];
 
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
             [To be reviewed by legal counsel]
           </p>
           <p className="mt-6 text-gray-400 text-sm leading-relaxed">
-            Aligned with the Digital Personal Data Protection Act, 2023 (India). Last updated: [Date].
+            Aligned with the Digital Personal Data Protection Act, 2023 (India). Last updated: September 2026.
           </p>
         </Reveal>
         <div className="mt-12 space-y-8">

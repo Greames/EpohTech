@@ -55,8 +55,15 @@ applications, investors, insights CMS, messages, JARVIS), /opportunities (verifi
   with consent, disclaimer page, footer legal links + short disclaimer — all screenshot-verified.
 
 ## Pending Placeholders For User
-[Founder Name] + bio, [email], [phone], [City], [LinkedIn URL], [Company 1/2 descriptions],
-grievance officer [Name]/[email] on /privacy, [Date] last-updated on legal pages.
+FILLED (2026-09-25): Founder = Tulasi Reddy (Team page, homepage leadership card, privacy
+grievance officer); email = tulasi.reddu@anvayapartners.in (NOTE: "reddu" spelled exactly as user
+provided — confirm not a typo of "reddy"); city = Hyderabad everywhere incl. email footers;
+legal pages dated September 2026; /epohtech dedicated page live (₹1.5 Cr / 2 years / less
+investment story, capabilities, founder + investor panels; linked from homepage, about, portfolio,
+footer).
+STILL PLACEHOLDER: [phone], [LinkedIn URL], [Company 1/2 — one-line description].
+NOTE: team notifications still go to tulasi.reddy@theepoh.com (OWNER_NOTIFY_EMAIL) — ask user
+whether to switch to the anvayapartners.in address.
 Legal counsel must review /privacy, /terms, /disclaimer before go-live.
 
 ## Backlog
