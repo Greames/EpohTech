@@ -9,7 +9,7 @@ const COMPANIES = [
     year: "Operating",
   },
   { name: "Dawn Fresh", description: "Wholesale meat distribution to restaurants from a single processing unit — with a franchise model planned for one to two units per district, roughly every 20–30 km.", year: "2026" },
-  { name: "Volt & Valve", description: "[One-line description]", year: "2026" },
+  { name: "Volt & Valve", description: "Plumbing, electrical and painting works for new homes and commercial spaces — powered by an estimator tool that turns an uploaded floor plan into a clear, upfront price and scope of work before work begins.", year: "2026" },
 ];
 
 export default function PortfolioPage() {

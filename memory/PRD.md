@@ -61,10 +61,12 @@ provided — confirm not a typo of "reddy"); city = Hyderabad everywhere incl. e
 legal pages dated September 2026; /epohtech dedicated page live (₹1.5 Cr / 2 years / less
 investment story, capabilities, founder + investor panels; linked from homepage, about, portfolio,
 footer).
-STILL PLACEHOLDER: [phone], [LinkedIn URL], Volt & Valve one-line description.
+STILL PLACEHOLDER: [phone], [LinkedIn URL].
 FILLED (2026-09-25, later): Company 1 = Dawn Fresh — "Wholesale meat distribution to restaurants
 from a single processing unit — franchise model planned, 1–2 units per district (every 20–30 km)";
-Company 2 name = Volt & Valve (description pending).
+Company 2 = Volt & Valve — "Plumbing, electrical and painting works for new homes and commercial
+spaces — estimator tool turns an uploaded floor plan into a clear, upfront price and scope of work."
+Portfolio page is now placeholder-free except [phone]/[LinkedIn URL] on contact/legal pages.
 NOTE: team notifications still go to tulasi.reddy@theepoh.com (OWNER_NOTIFY_EMAIL) — ask user
 whether to switch to the anvayapartners.in address.
 Legal counsel must review /privacy, /terms, /disclaimer before go-live.

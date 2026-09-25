@@ -222,7 +222,7 @@ export default function HomePage() {
                 </span>
               </Link>
             </Reveal>
-            {["Wholesale meat distribution to restaurants from a single processing unit — franchise model planned for one to two units per district (every 20–30 km).", "[Company 2 — one-line description]"].map((c, i) => (
+            {["Wholesale meat distribution to restaurants from a single processing unit — franchise model planned for one to two units per district (every 20–30 km).", "Plumbing, electrical and painting for new homes and commercial spaces — an estimator tool gives a clear price and scope upfront, from your uploaded plan."].map((c, i) => (
               <Reveal key={c} delay={(i + 1) * 0.1}>
                 <div data-testid={`portfolio-preview-${i + 1}`} className="rounded-3xl border border-white/5 bg-charcoal/50 p-8 h-full">
                   <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-champagne">Launching 2026</span>
