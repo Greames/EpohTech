@@ -96,3 +96,17 @@ Legal counsel must review /privacy, /terms, /disclaimer before go-live.
   owner emails via Resend, reply-to assist@theepoh.com); GET /api/admin/epoh-enquiries (admin).
 - Regression tests: /app/backend/tests/test_epoh.py. Test report: /app/test_reports/iteration_1.json
   (100% backend 5/5, all frontend flows pass).
+
+## EPOHTECH Microsite — Round 2 (2026-09-25)
+- Client credibility strip on /epohtech home (between hero and services): Dawn Fresh, Volt & Valve
+  + "every Anvaya Partners company" wordmarks (data-testid="epoh-clients-strip"). Send more client
+  names/logos to extend.
+- Program cohort detail pages: /epohtech/programs/big-data-engineering and
+  /epohtech/programs/oracle-fusion-oic (EpohProgramDetailPage.js, data-driven by slug) with 4 fact
+  cards, 5-module curriculum, who-it's-for, sticky dedicated registration form (posts to
+  /api/epoh/enquiry with program interest preset; message prefixed "Program registration —").
+  Programs listing cards now link "VIEW PROGRAM & REGISTER" to detail pages. Unknown slug redirects.
+- Admin dashboard: new "EPOHTECH Enquiries" tab listing all epoh_enquiries (name, interest, email,
+  phone, date, message). Loaded via GET /api/admin/epoh-enquiries.
+- Backend: POST /api/epoh/enquiry now rejects consent=false with 400 (defense in depth).
+- Test report: /app/test_reports/iteration_2.json — 100% backend (5/5 pytest) + all frontend flows.
