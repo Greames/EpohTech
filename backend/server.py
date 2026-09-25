@@ -253,6 +253,15 @@ class ContactMessage(BaseModel):
     message: str
 
 
+class EpohEnquiry(BaseModel):
+    name: str
+    email: EmailStr
+    phone: Optional[str] = ""
+    interest: Optional[str] = "General Enquiry"
+    message: str
+    consent: bool = False
+
+
 # ---------------- Auth helpers ----------------
 async def _user_from_token(token: Optional[str]):
     if not token:
@@ -487,6 +496,40 @@ async def submit_contact(payload: ContactMessage):
     return {"status": "success", "message_id": doc["message_id"]}
 
 
+@api_router.post("/epoh/enquiry")
+async def submit_epoh_enquiry(payload: EpohEnquiry):
+    now = datetime.now(timezone.utc)
+    doc = payload.model_dump()
+    doc.update({"enquiry_id": f"eq_{uuid.uuid4().hex[:12]}", "created_at": now.isoformat()})
+    await db.epoh_enquiries.insert_one(dict(doc))
+
+    confirm_html = _email_shell(
+        "We received your enquiry",
+        f'<p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#D1D5DB">'
+        f'Hi {escape(doc["name"])}, thank you for reaching out to EPOHTECH '
+        f'about <strong style="color:#E6C280">{escape(doc["interest"] or "your enquiry")}</strong>. '
+        'Our team will get back to you shortly.</p>',
+    )
+    asyncio.create_task(send_email(
+        to=doc["email"],
+        subject="We received your enquiry — EPOHTECH",
+        html=confirm_html,
+        reply_to="assist@theepoh.com",
+    ))
+    if OWNER_NOTIFY_EMAIL:
+        notify_html = _email_shell(
+            f'New EPOHTECH enquiry: {escape(doc["name"])} ({escape(doc["interest"] or "General")})',
+            _kv_rows(doc),
+        )
+        asyncio.create_task(send_email(
+            to=OWNER_NOTIFY_EMAIL,
+            subject=f'New EPOHTECH enquiry — {doc["name"]}',
+            html=notify_html,
+            reply_to="assist@theepoh.com",
+        ))
+    return {"status": "success", "enquiry_id": doc["enquiry_id"]}
+
+
 @api_router.get("/my/activity")
 async def my_activity(request: Request):
     user = await get_current_user(request)
@@ -676,6 +719,13 @@ async def admin_contacts(request: Request):
     await require_admin(request)
     items = await db.contact_messages.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
     return {"messages": items}
+
+
+@api_router.get("/admin/epoh-enquiries")
+async def admin_epoh_enquiries(request: Request):
+    await require_admin(request)
+    items = await db.epoh_enquiries.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    return {"enquiries": items}
 
 
 @api_router.get("/admin/insights")

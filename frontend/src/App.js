@@ -20,7 +20,12 @@ import ContactPage from "@/pages/ContactPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import TermsPage from "@/pages/TermsPage";
 import DisclaimerPage from "@/pages/DisclaimerPage";
-import EpohTechPage from "@/pages/EpohTechPage";
+import EpohLayout from "@/components/EpohLayout";
+import EpohHomePage from "@/pages/EpohHomePage";
+import EpohServicesPage from "@/pages/EpohServicesPage";
+import EpohProgramsPage from "@/pages/EpohProgramsPage";
+import EpohAboutPage from "@/pages/EpohAboutPage";
+import EpohContactPage from "@/pages/EpohContactPage";
 import AccountPage from "@/pages/AccountPage";
 import AdminPage from "@/pages/AdminPage";
 import OpportunitiesPage from "@/pages/OpportunitiesPage";
@@ -41,29 +46,47 @@ function AppRouter() {
     return <AuthCallback />;
   }
   return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/approach" element={<ApproachPage />} />
+      <Route path="/portfolio" element={<PortfolioPage />} />
+      <Route path="/founders" element={<FoundersPage />} />
+      <Route path="/build" element={<Navigate to="/founders" replace />} />
+      <Route path="/investors" element={<InvestorsPage />} />
+      <Route path="/team" element={<TeamPage />} />
+      <Route path="/insights" element={<InsightsPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/disclaimer" element={<DisclaimerPage />} />
+      <Route path="/epohtech" element={<EpohLayout />}>
+        <Route index element={<EpohHomePage />} />
+        <Route path="services" element={<EpohServicesPage />} />
+        <Route path="programs" element={<EpohProgramsPage />} />
+        <Route path="about" element={<EpohAboutPage />} />
+        <Route path="contact" element={<EpohContactPage />} />
+      </Route>
+      <Route path="/account" element={<AccountPage />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/opportunities" element={<OpportunitiesPage />} />
+      <Route path="/my-venture" element={<FounderPortalPage />} />
+      <Route path="*" element={<HomePage />} />
+    </Routes>
+  );
+}
+
+function SiteChrome() {
+  const { pathname } = useLocation();
+  const isEpoh = pathname.startsWith("/epohtech");
+  return (
     <>
-      <WhatsAppButton />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/approach" element={<ApproachPage />} />
-        <Route path="/portfolio" element={<PortfolioPage />} />
-        <Route path="/founders" element={<FoundersPage />} />
-        <Route path="/build" element={<Navigate to="/founders" replace />} />
-        <Route path="/investors" element={<InvestorsPage />} />
-        <Route path="/team" element={<TeamPage />} />
-        <Route path="/insights" element={<InsightsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route path="/disclaimer" element={<DisclaimerPage />} />
-        <Route path="/epohtech" element={<EpohTechPage />} />
-        <Route path="/account" element={<AccountPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/opportunities" element={<OpportunitiesPage />} />
-        <Route path="/my-venture" element={<FounderPortalPage />} />
-        <Route path="*" element={<HomePage />} />
-      </Routes>
+      {!isEpoh && <HeaderNav />}
+      {!isEpoh && <WhatsAppButton />}
+      <main>
+        <AppRouter />
+      </main>
+      {!isEpoh && <Footer />}
     </>
   );
 }
@@ -89,11 +112,7 @@ function App() {
         <AuthProvider>
           <ScrollToTop />
           <div className="grain-overlay" aria-hidden="true" />
-          <HeaderNav />
-          <main>
-            <AppRouter />
-          </main>
-          <Footer />
+          <SiteChrome />
           <Toaster theme="dark" position="top-center" richColors />
         </AuthProvider>
       </BrowserRouter>
