@@ -3,8 +3,8 @@ import { ArrowUpRight, MapPin, Target, Handshake, Gauge } from "lucide-react";
 import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
 
 const VALUES = [
-  { icon: Target, title: "Evidence first", body: "We ran the model on ourselves before offering it to anyone else. Revenue before rhetoric." },
-  { icon: Gauge, title: "Capital-efficient", body: "₹1.5 Cr in revenue within two years, with less outside investment than most companies spend finding their footing." },
+  { icon: Target, title: "Founder-first", body: "Built for non-technical founders: we translate technology into business outcomes, in plain language." },
+  { icon: Gauge, title: "Capital-efficient", body: "Enterprise-grade capability without the cost of hiring and building an in-house IT team." },
   { icon: Handshake, title: "Client-centric", body: "Every solution is customised to the unique demands of the client — never a template with a new logo." },
 ];
 
@@ -20,12 +20,12 @@ export default function EpohAboutPage() {
         <Reveal className="max-w-3xl">
           <Eyebrow>About Epoh Tech</Eyebrow>
           <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.02]">
-            <MaskedLine delay={0.15}><span>Proof, in revenue —</span></MaskedLine>
-            <MaskedLine delay={0.3}><span className="text-champagne">not in pitch decks.</span></MaskedLine>
+            <MaskedLine delay={0.15}><span>Your IT department,</span></MaskedLine>
+            <MaskedLine delay={0.3}><span className="text-champagne">without the hiring.</span></MaskedLine>
           </h1>
           <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
-            Before Anvaya Partners asked anyone to trust its model, it ran the model on itself.
-            Epoh Tech is the result.
+            Epoh Tech is the technology company of Anvaya Partners — built to give non-technical
+            founders and startups a complete IT capability from day one.
           </p>
         </Reveal>
 
@@ -33,32 +33,28 @@ export default function EpohAboutPage() {
           <Reveal className="lg:col-span-5">
             <Eyebrow>The Story</Eyebrow>
             <h2 className="mt-6 text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-[1.05]">
-              We built the machine <span className="text-champagne">before selling the ride.</span>
+              Built inside a portfolio. <span className="text-champagne">Working for yours.</span>
             </h2>
           </Reveal>
           <div className="lg:col-span-7 space-y-6">
             <Reveal delay={0.1}>
               <p className="text-gray-300 text-base md:text-lg leading-relaxed">
-                Epoh Tech started the way we believe every good company should start: with real work
-                for real customers, funded carefully, built to sustain itself. No growth-at-all-costs,
-                no burn chasing headlines.
+                Epoh Tech was built by Anvaya Partners as its own technology capability — the team
+                that designs, builds and runs the systems behind every company the firm backs.
               </p>
             </Reveal>
             <Reveal delay={0.15}>
               <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                Within two years it reached ₹1.5 Cr in revenue — with less investment than most
-                companies spend finding their footing. That is the capital-efficient, operator-led
-                approach Anvaya Partners brings to every company it backs: evidence first,
-                capital second, sustainability always.
+                That means our engineers work on real operations every day: data engineering, big
+                data analytics, Oracle cloud, custom software and the day-to-day IT that keeps
+                companies running.
               </p>
             </Reveal>
             <Reveal delay={0.2}>
               <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                Today, Epoh Tech provides technology support to all Anvaya Partners companies — and
-                offers the same data engineering, big data analytics, Oracle cloud and consulting
-                capability to businesses beyond the portfolio. Our seasoned team brings deep
-                experience across the systems that keep enterprises running, with a client-centric
-                approach that tailors every solution to the demands in front of us.
+                We now bring the same team to founders and startups beyond the portfolio —
+                especially non-technical founders who need a dependable IT department, not another
+                vendor.
               </p>
             </Reveal>
           </div>

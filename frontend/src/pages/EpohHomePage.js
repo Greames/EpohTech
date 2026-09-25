@@ -5,12 +5,6 @@ import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
 const HERO_IMG = "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHx0ZWNoJTIwc29mdHdhcmUlMjBlbmdpbmVlciUyMGNvZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85";
 const PROGRAMS_IMG = "https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwyfHx0ZWNoJTIwc29mdHdhcmUlMjBlbmdpbmVlciUyMGNvZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85";
 
-const STATS = [
-  { value: "₹1.5 Cr", label: "Revenue", note: "Earned within two years of launch", testId: "epoh-stat-revenue" },
-  { value: "2 years", label: "To Prove the Model", note: "From zero to a self-sustaining platform", testId: "epoh-stat-years" },
-  { value: "Less", label: "Outside Investment", note: "Built capital-efficiently — the Anvaya way", testId: "epoh-stat-investment" },
-];
-
 const SERVICES = [
   { icon: Database, title: "Data Engineering", body: "Data integration, ETL, warehousing and pipelines that turn scattered data into a single, dependable source of truth." },
   { icon: LineChart, title: "Big Data Analytics", body: "Large datasets processed and analysed efficiently — business intelligence you can act on, not just admire." },
@@ -33,12 +27,14 @@ export default function EpohHomePage() {
         <Reveal className="max-w-3xl">
           <Eyebrow>An Anvaya Partners Company</Eyebrow>
           <h1 className="mt-6 text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[0.98]">
-            <MaskedLine delay={0.15}><span>Engineering</span></MaskedLine>
-            <MaskedLine delay={0.3}><span className="text-champagne">your success.</span></MaskedLine>
+            <MaskedLine delay={0.15}><span>Your IT department</span></MaskedLine>
+            <MaskedLine delay={0.3}><span className="text-champagne">for non-technical founders</span></MaskedLine>
+            <MaskedLine delay={0.45}><span>and startups.</span></MaskedLine>
           </h1>
           <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
-            Epoh Tech builds the data, cloud and enterprise systems that ambitious businesses run
-            on — proven first inside the Anvaya Partners portfolio, now delivered to yours.
+            Epoh Tech becomes the technology team for founders who don't come from tech — data,
+            cloud, enterprise systems and day-to-day IT, handled end to end, so you can focus on
+            the business.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <Link
@@ -58,21 +54,8 @@ export default function EpohHomePage() {
           </div>
         </Reveal>
 
-        {/* Stats */}
-        <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-5" data-testid="epoh-stats">
-          {STATS.map((s, i) => (
-            <Reveal key={s.label} delay={i * 0.1}>
-              <div data-testid={s.testId} className="rounded-3xl border border-champagne/20 bg-charcoal/60 p-8 sm:p-10 h-full">
-                <p className="font-mono font-bold text-4xl sm:text-5xl text-champagne tracking-tight">{s.value}</p>
-                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.25em] text-gray-400">{s.label}</p>
-                <p className="mt-2 text-[13px] text-gray-500 leading-relaxed">{s.note}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
         {/* Services */}
-        <div className="mt-28">
+        <div className="mt-24 md:mt-32">
           <Reveal className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <div>
               <Eyebrow>What We Do</Eyebrow>
@@ -113,23 +96,23 @@ export default function EpohHomePage() {
               <img src={HERO_IMG} alt="Epoh Tech engineering" className="w-full h-[320px] sm:h-[420px] object-cover" loading="lazy" />
               <div className="absolute inset-0 bg-obsidian/40" />
               <p className="absolute bottom-5 left-6 font-mono text-[10px] uppercase tracking-[0.3em] text-champagne">
-                Built capital-efficiently
+                An Anvaya Partners Company
               </p>
             </div>
           </Reveal>
           <Reveal delay={0.12}>
-            <Eyebrow>The Proof</Eyebrow>
+            <Eyebrow>Why We Exist</Eyebrow>
             <h2 className="mt-6 text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-[1.05]">
-              We built the machine <span className="text-champagne">before selling the ride.</span>
+              Built inside a portfolio. <span className="text-champagne">Working for yours.</span>
             </h2>
             <p className="mt-6 text-gray-300 text-base md:text-lg leading-relaxed">
-              Epoh Tech started the way we believe every good company should start: with real work
-              for real customers, funded carefully, built to sustain itself.
+              Epoh Tech runs technology for every Anvaya Partners company — the same engineers,
+              systems and standards are now available to founders and startups beyond the portfolio.
             </p>
             <p className="mt-4 text-gray-400 text-sm sm:text-base leading-relaxed">
-              Within two years it reached ₹1.5 Cr in revenue — with less investment than most
-              companies spend finding their footing. That is the capital-efficient, operator-led
-              approach behind every engagement we take on.
+              No technical co-founder? No IT team? We step in as yours — from architecture to
+              analytics to everyday support — so your capital goes into the business, not into
+              rebuilding basic systems.
             </p>
             <Link
               to="/epohtech/about"
@@ -199,10 +182,10 @@ export default function EpohHomePage() {
         <Reveal className="mt-28">
           <div data-testid="epoh-home-cta" className="rounded-3xl border border-champagne/20 bg-charcoal/60 p-10 sm:p-14 text-center">
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-[1.05]">
-              Ready to transform your business <span className="text-champagne">with technology that works?</span>
+              Focus on your business. <span className="text-champagne">We'll handle the technology.</span>
             </h2>
             <p className="mt-5 text-gray-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-              Tell us what you are building. We will show you how we would engineer it.
+              Tell us what you are building. We will show you how we would run it.
             </p>
             <Link
               to="/epohtech/contact"

@@ -79,3 +79,20 @@ Legal counsel must review /privacy, /terms, /disclaimer before go-live.
 - P1: Legal counsel review of the three legal pages.
 - P2: Founder photos on /team; LinkedIn/social links in footer.
 - P2: JARVIS KPI anomaly alerts; weekly investor recap email.
+
+## EPOHTECH Standalone Microsite (2026-09-25)
+- Separate multi-page EPOHTECH website inside the app under /epohtech (home, services, programs,
+  about, contact) with its OWN nav (EpohNav) + footer (EpohFooter); Anvaya HeaderNav/Footer/
+  WhatsApp button are hidden on /epohtech routes via SiteChrome in App.js. Old single sub-page
+  EpohTechPage.js deleted.
+- POSITIONING (user-directed): "Your IT department for non-technical founders and startups."
+  Keep "An Anvaya Partners Company" tag. NO revenue stats (no ₹1.5 Cr / 2 years / outside
+  investment) anywhere on EPOHTECH pages.
+- Real content reused from www.theepoh.com: services (Data Engineering, Big Data Analytics,
+  Oracle ERP & OIC, IT Strategy & Consulting), 4 solutions, 2 training programs (Big Data
+  Engineering, Oracle Fusion with OIC), phone +91 70229 13284, email assist@theepoh.com,
+  offices in Proddatur (AP) and Hyderabad (Awfis, Prestige Skytech, Financial District).
+- Backend: POST /api/epoh/enquiry (consent required, stores in epoh_enquiries, confirmation +
+  owner emails via Resend, reply-to assist@theepoh.com); GET /api/admin/epoh-enquiries (admin).
+- Regression tests: /app/backend/tests/test_epoh.py. Test report: /app/test_reports/iteration_1.json
+  (100% backend 5/5, all frontend flows pass).

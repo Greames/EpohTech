@@ -32,11 +32,11 @@ export default function EpohFooter() {
               </span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed max-w-sm mb-3">
-              Engineering your success.
+              Your IT department for non-technical founders and startups.
             </p>
             <p className="text-gray-500 text-sm leading-relaxed max-w-sm mb-8">
               An Anvaya Partners company delivering data engineering, cloud, Oracle ERP and
-              custom software — proven inside our own portfolio before it is delivered to yours.
+              custom software — the same team that runs technology for every Anvaya company.
             </p>
             <div className="space-y-4 max-w-sm">
               <a

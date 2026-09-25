@@ -498,6 +498,8 @@ async def submit_contact(payload: ContactMessage):
 
 @api_router.post("/epoh/enquiry")
 async def submit_epoh_enquiry(payload: EpohEnquiry):
+    if not payload.consent:
+        raise HTTPException(status_code=400, detail="Consent is required to submit an enquiry")
     now = datetime.now(timezone.utc)
     doc = payload.model_dump()
     doc.update({"enquiry_id": f"eq_{uuid.uuid4().hex[:12]}", "created_at": now.isoformat()})
