@@ -115,3 +115,9 @@ Legal counsel must review /privacy, /terms, /disclaimer before go-live.
 - New user-directed positioning: hero H1 = "Your IT Department, On-Demand." and sub =
   "Non-tech cofounders can concentrate on running the business — we back the tech." Footer
   tagline updated to match. (Replaces earlier "for non-technical founders and startups" phrasing.)
+
+## EPOHTECH About Echo (2026-09-25)
+- About page headline now "You run the business. We back the tech." with intro echoing
+  "your IT department, on-demand" — aligned with the new home hero tagline.
+- STILL WAITING ON USER: legal counsel edits for /privacy, /terms, /disclaimer; real phone +
+  LinkedIn URL for Anvaya contact/legal placeholders.

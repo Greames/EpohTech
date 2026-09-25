@@ -20,12 +20,13 @@ export default function EpohAboutPage() {
         <Reveal className="max-w-3xl">
           <Eyebrow>About Epoh Tech</Eyebrow>
           <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.02]">
-            <MaskedLine delay={0.15}><span>Your IT department,</span></MaskedLine>
-            <MaskedLine delay={0.3}><span className="text-champagne">without the hiring.</span></MaskedLine>
+            <MaskedLine delay={0.15}><span>You run the business.</span></MaskedLine>
+            <MaskedLine delay={0.3}><span className="text-champagne">We back the tech.</span></MaskedLine>
           </h1>
           <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
-            Epoh Tech is the technology company of Anvaya Partners — built to give non-technical
-            founders and startups a complete IT capability from day one.
+            Epoh Tech is the technology company of Anvaya Partners — your IT department,
+            on-demand, giving non-technical founders and startups a complete IT capability from
+            day one.
           </p>
         </Reveal>
 
