@@ -110,3 +110,8 @@ Legal counsel must review /privacy, /terms, /disclaimer before go-live.
   phone, date, message). Loaded via GET /api/admin/epoh-enquiries.
 - Backend: POST /api/epoh/enquiry now rejects consent=false with 400 (defense in depth).
 - Test report: /app/test_reports/iteration_2.json — 100% backend (5/5 pytest) + all frontend flows.
+
+## EPOHTECH Tagline Update (2026-09-25)
+- New user-directed positioning: hero H1 = "Your IT Department, On-Demand." and sub =
+  "Non-tech cofounders can concentrate on running the business — we back the tech." Footer
+  tagline updated to match. (Replaces earlier "for non-technical founders and startups" phrasing.)

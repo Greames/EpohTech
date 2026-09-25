@@ -27,14 +27,12 @@ export default function EpohHomePage() {
         <Reveal className="max-w-3xl">
           <Eyebrow>An Anvaya Partners Company</Eyebrow>
           <h1 className="mt-6 text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[0.98]">
-            <MaskedLine delay={0.15}><span>Your IT department</span></MaskedLine>
-            <MaskedLine delay={0.3}><span className="text-champagne">for non-technical founders</span></MaskedLine>
-            <MaskedLine delay={0.45}><span>and startups.</span></MaskedLine>
+            <MaskedLine delay={0.15}><span>Your IT Department,</span></MaskedLine>
+            <MaskedLine delay={0.3}><span className="text-champagne">On-Demand.</span></MaskedLine>
           </h1>
           <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
-            Epoh Tech becomes the technology team for founders who don't come from tech — data,
-            cloud, enterprise systems and day-to-day IT, handled end to end, so you can focus on
-            the business.
+            Non-tech cofounders can concentrate on running the business — we back the tech.
+            Data, cloud, enterprise systems and day-to-day IT, handled end to end.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <Link
