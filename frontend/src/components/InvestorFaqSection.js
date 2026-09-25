@@ -8,32 +8,32 @@ import {
 
 const FAQS = [
   {
-    q: "What ticket sizes can I participate with?",
-    a: "Venture opportunities in the ecosystem typically range from ₹10L to ₹10Cr in total capital requirement. Within each opportunity, your participation is sized to your comfort — you will always see the full capital plan before deciding.",
+    q: "Does Anvaya Partners manage or pool investors' money?",
+    a: "No. Anvaya Partners invests its own capital and does not manage or pool investors' money. Members of our investor network review opportunities privately and invest directly in the companies they individually choose.",
   },
   {
-    q: "Do I choose the ventures myself?",
-    a: "Yes. This is not a blind pool or a fund you hand money to. You review each opportunity individually — business, founder, market, capital requirement and progress — and decide venture by venture.",
+    q: "Who can join the investor network?",
+    a: "The network is private and verification-based. Every application is reviewed manually, and membership is by invitation or approved application. Opportunities are shared only with verified members — never publicly.",
   },
   {
-    q: "What information do I get before deciding?",
-    a: "Structured documentation for every opportunity: the business and revenue model, market research, founder background, capital requirement, current traction and milestones, plus pitch decks and financial documents through the investor portal.",
+    q: "What information do I receive about an opportunity?",
+    a: "Verified members receive curated documentation privately: the business and revenue model, the founder's background, the capital plan and current progress. We do not publicly list any company's fundraising terms, amounts, valuations or share prices.",
+  },
+  {
+    q: "What is the difference between the two paths?",
+    a: "Backing individual companies means choosing specific opportunities as a verified network member. Investing in Anvaya Partners means backing the firm itself, with exposure to every company we invest in and build — request our deck and our team will follow up personally.",
   },
   {
     q: "How do returns work?",
-    a: "Participation is equity-based. Value is realized as ventures mature — through exits, spin-offs, dividends or follow-on rounds. We never promise guaranteed returns, exits or allocations; every venture carries real risk and we say so openly.",
+    a: "Participation is equity-based, and value is realised as companies mature — through exits, dividends or follow-on rounds. Nothing is guaranteed. Investing in early-stage companies involves high risk, including possible loss of the entire amount invested.",
   },
   {
-    q: "How is the ownership structure decided?",
-    a: "Per venture, not by a fixed formula. Ownership reflects founder contribution, capital contributed, intellectual property, technology, existing customers, experience, risk, vesting and milestones — designed with appropriate legal, tax and regulatory advice for each company.",
+    q: "Is Anvaya Partners registered with SEBI?",
+    a: "Anvaya Partners Private Limited is not a stock exchange, is not registered with SEBI as an intermediary, and does not solicit investment from the public. Opportunities are shared only privately with eligible, verified investors in compliance with applicable law. Read the full disclaimer on our Disclaimer page.",
   },
   {
-    q: "What happens after I register?",
-    a: "Registration → verification → approved access to the Opportunities portal. From there you can explore live ventures, download documentation, and express interest — which starts a direct conversation with the studio.",
-  },
-  {
-    q: "Can I track a venture after participating?",
-    a: "Yes. The investor portal shows milestone progress and monthly KPIs for investor-visible ventures, and the studio shares structured updates as ventures move from validation through launch and scale.",
+    q: "Can I track progress after participating?",
+    a: "Yes. Verified members receive structured progress updates, and our portal shows milestones and monthly KPIs for the companies you follow.",
   },
 ];
 

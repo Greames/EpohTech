@@ -1,124 +1,66 @@
-# Second Salary Capital — PRD
+# Anvaya Partners — PRD
 
-## Original Problem Statement
-Build the complete website for Second Salary Capital, a venture studio / company-building
-platform (not a VC fund, broker or marketplace). Brand line: "It Started With Our Second Salary."
-Public proof: 80+ Investors Onboarded, 2+ Startups Funded, ₹10L–₹10Cr Investment Opportunity Range.
-Ecosystem: Founders + Investors + Capital + EPOHTECH (technology partner) + business support.
-Origin story: first salary to parents & God (gratitude), second salary started a company (building).
-Website jobs: establish credibility, attract founders (BUILD WITH US), attract investors
-(INVEST WITH US), explain the ecosystem. Do NOT reveal current ventures publicly.
-Design: premium, bold, obsidian + champagne accent, kinetic hero, animated counters, marquee,
-mobile-first. Integrations: Emergent-managed Google sign-in, Resend transactional email.
+## Current Brand (2026-09-22 rebrand — supersedes "Second Salary Capital")
+Anvaya Partners (ALWAYS in full, never just "Anvaya"). Legal: Anvaya Partners Private Limited,
+[City], India. Tagline: "Where capital meets founders." Name: Anvaya (अन्वय) = Sanskrit for
+"bringing together" — founders with ambition, investors with conviction, a partner committed to both.
+Early-stage investment firm investing its OWN capital, hands-on with founders on strategy,
+technology, finance, operations, go-to-market. Primary audience: mainstream investors; secondary:
+founders. Tone: premium, calm, credible, institutional. No hype.
 
-## User Personas
-- Founder: has idea/expertise/existing business; wants capital + tech + support.
-- Investor: wants structured venture opportunities (₹10L–₹10Cr range) with documentation.
-- Studio team (future admin): manages applications, investors, ventures, pipeline.
+## Business Rules (legal — India)
+- NEVER publicly list fundraising terms, amounts, valuations or share prices of any company.
+- NO "Invest now" buttons, payment gateways or online investment transactions.
+- Investor CTAs: only "Request Deck" or "Apply to Join the Network" (manual review).
+- Opportunities shared only privately with verified investors.
+- Site-wide disclaimer (short in footer, full at /disclaimer); Privacy Policy (DPDP Act 2023) at
+  /privacy; Terms of Use at /terms — all marked [To be reviewed by legal counsel].
+- Every form has a consent checkbox linked to /privacy (founder, investor, contact, deck request,
+  newsletter).
+- Placeholders kept in [square brackets]: [Founder Name], [email], [phone], [City], [LinkedIn URL],
+  [Company 1/2 — one-line description].
+
+## Track Record / Portfolio
+- EPOHTECH: own technology platform + technology partner to all portfolio companies.
+  ₹1.5 Cr revenue in 2 years, capital-efficient, less investment. Shown as proof of the model.
+- 2 more startups launching 2026 (placeholders on /portfolio).
 
 ## Architecture
-- Frontend: React (CRA/craco), Tailwind, framer-motion, Lenis smooth scroll, Sonner toasts.
-- Backend: FastAPI + MongoDB (motor). All routes under /api.
-- Auth: Emergent-managed Google OAuth → backend /api/auth/session exchanges session_id,
-  httpOnly session_token cookie (7 days), users + user_sessions collections, custom user_id (UUID).
-- Email: Emergent managed Resend proxy (EMERGENT_EMAIL_KEY in backend/.env,
-  EMAIL_FROM_NAME="Second Salary Capital"), guardrail gate on every send, server-side templates.
-- Collections: users, user_sessions, founder_applications, investor_registrations, contact_messages.
+- React + Tailwind + framer-motion + Lenis; FastAPI + MongoDB; routes under /api.
+- Auth: Emergent Google OAuth (session cookie). Roles: admin (ADMIN_EMAILS), verified investor,
+  founder (linked by founder_email on venture).
+- Email: Emergent managed Resend proxy — confirmations, team notifications (OWNER_NOTIFY_EMAIL),
+  status-change emails, instant AI interest alerts, JARVIS daily digest (gpt-5.4, 07:00 UTC +
+  manual Send Now in admin).
+- Storage: Emergent object storage for founder pitch decks + venture documents.
+- Collections: users, user_sessions, founder_applications, investor_registrations, contact_messages
+  (incl. deck requests), ventures, milestones, ownership, kpis, tasks, documents, interests,
+  insights, files, jarvis_runs.
 
-## Implemented (2026-09-21)
-- 9 pages: Home (kinetic hero, animated metrics, origin timeline, marquee, 4 pillars, 13 support
-  cards preview, EPOHTECH section, founder/investor CTAs, insights), /build, /investors, /support,
-  /epohtech, /story, /insights, /contact, /account (auth-gated dashboard).
-- Founder application (21 fields) → MongoDB + confirmation email + optional team notify.
-- Investor registration (13 fields) → MongoDB + confirmation email + optional team notify.
-- Contact form + footer newsletter → MongoDB + confirmation email.
-- Emergent Google sign-in, session cookie auth, /api/auth/me, /api/auth/logout, /api/my/activity.
-- SEO meta tags, data-testid coverage, dark obsidian design system (Outfit + JetBrains Mono).
+## Pages (public)
+/ (hero "Where capital meets founders", अन्वय name meaning, approach pillars + process + values,
+two-audience doors, EPOHTECH track record + portfolio preview, team preview, insights),
+/about, /approach, /portfolio, /founders (application + deck upload), /investors (two paths,
+Request Deck modal, network application, FAQ), /team, /insights (DB-backed CMS), /contact,
+/privacy, /terms, /disclaimer.
+Platform: /account, /admin (overview+chart, ventures w/ milestones/tasks/captable/KPIs/documents,
+applications, investors, insights CMS, messages, JARVIS), /opportunities (verified investors),
+/my-venture (founder workspace). WhatsApp button: +91 96401 08029.
 
-## Verified
-- POST /api/applications/founder, /api/applications/investor, /api/contact → success + 202 email sends.
-- /api/auth/me + /api/my/activity with bearer token; 401 unauthenticated.
-- Browser: hero, metrics counters, founder form submit → success panel + toast; /account with session cookie renders user.
+## Verified (2026-09-25)
+- Rebrand: zero "Second Salary"/old-brand strings remain in frontend/backend (grep-verified).
+- Insights reseeded with 6 Anvaya articles; founder/investor/contact+deck-request submissions work
+  with consent; all confirmation emails accepted (202) with Anvaya Partners branding.
+- UI: hero, name-meaning (अन्वय), EPOHTECH proof card, investor two-path cards, Request Deck modal
+  with consent, disclaimer page, footer legal links + short disclaimer — all screenshot-verified.
 
-## Implemented (2026-09-21, round 2)
-- Team notifications: OWNER_NOTIFY_EMAIL=tulasi.reddy@theepoh.com — every founder application,
-  investor registration and contact message emails the team inbox; reply-to set to same.
-- Admin dashboard at /admin (unlisted, admin-only via ADMIN_EMAILS env): Overview stats,
-  Founder Applications (status pipeline: submitted → screening → shortlisted → discovery →
-  validation → founder_review → approved/rejected), Investor Registrations (verification_pending →
-  verified → approved/rejected), Insights CMS (create/edit/publish/unpublish/delete), Messages.
-  Account page shows "Admin Dashboard" shortcut when the signed-in user is an admin.
-- Pitch deck upload: founders attach PDF/PPT/DOC (max 15MB) in the application form; stored in
-  Emergent object storage (EMERGENT_LLM_KEY), metadata in db.files (soft-delete pattern); admins
-  download via /api/admin/files/{file_id}/download.
-- Insights CMS: articles live in db.insights; public GET /api/insights serves published articles;
-  6 launch articles seeded on startup. Public InsightsSection fetches from API with code fallback.
-
-## Implemented (2026-09-21, round 3)
-- Status-change emails: admin pipeline moves (founder + investor) email the person automatically;
-  verified/approved investors are told opportunities access is open.
-- Venture Tracker: /admin → Ventures tab. Ventures CRUD (name, industry, stage, capital required,
-  founder, status, investor-visibility), milestones with due dates + overdue highlighting,
-  cap table rows (party / type / %) with live allocation total. Collections: ventures, milestones,
-  ownership.
-- Investor Portal: /opportunities — verified/approved investors (matched by Google sign-in email)
-  see investor-visible ventures with stage, capital, founder, milestone progress; Express Interest
-  stores to db.interests and emails the team. Unverified → 403 with verification-pending screen.
-  Account page links to /opportunities once verified.
-- JARVIS Digest: POST /api/admin/jarvis/digest generates an AI digest (gpt-5.4 via emergentintegrations,
-  streamed + accumulated; plain fallback if LLM fails) covering 24h applications/registrations/messages/
-  interests, overdue + upcoming milestones, pipeline counts; emailed to the team inbox; auto-scheduler
-  runs daily 07:00 UTC while the pod is up; runs logged to db.jarvis_runs. Admin Overview has a
-  "Send Now" button with inline preview.
-
-## Implemented (2026-09-21, round 4)
-- Venture Documents: admin uploads decks/financials/docs per venture (PDF/PPT/DOC/XLS/CSV, 25MB,
-  object storage, db.documents soft-delete); verified investors see and download them on
-  /opportunities (only for investor-visible ventures); admin download via /api/admin/documents.
-- Portfolio KPIs: monthly revenue + growth% per venture (db.kpis); KPI chips on each venture card;
-  Portfolio Revenue line chart (recharts) on admin Overview aggregating all ventures by month.
-- Interest Alerts: express-interest now triggers an INSTANT AI-written JARVIS alert email to the
-  team inbox (2-3 sentence summary + next step, plain fallback if LLM fails), in addition to the
-  daily digest.
-- Founder Portal: /my-venture — founders sign in with Google; venture linked via founder_email
-  field on the venture (set in admin venture editor); shows stage/status, milestones with overdue
-  flags, and tasks the founder can check off (PATCH /api/my/tasks, owner-or-admin only).
-  Account page links to it.
-
-## Implemented (2026-09-22)
-- Revenue Model section ("How value flows through the ecosystem") on the homepage (after What We Do)
-  and on the For Investors page: Founders (15–40% equity + salary once funded + exit wealth),
-  Investors (choose ventures, returns via exits/spin-offs/dividends, no guaranteed returns),
-  Studio (anchor equity, no fee-first model) + illustrative 60/25/15 equity bar marked as
-  example-only with flexible-structure explanation.
-- Brand guidance confirmed with user: "first salary to parents and God/faith" stays — it is the
-  core differentiator of the brand story.
-- "Why It Matters" section on Our Story page: REMOVED per user feedback (don't force-connect the
-  origin story to the business). StoryMeaningSection component deleted.
-- Ecosystem diagram section on homepage (after What We Do): "One studio. Four forces. Companies,
-  built repeatedly." — Second Salary Capital operating-framework card connected to Founders
-  (leadership & execution), Investors (capital & strategy), EPOHTECH (technology & product),
-  flowing into Company Building → New Ventures → Scale → Liquidity/Exit strip.
-  Connectors DRAW THEMSELVES on scroll (scaleY/scaleX whileInView) with staggered flow chips.
-- Investor FAQ on /investors: 7-question accordion (ticket sizes, choosing ventures, documentation,
-  returns/no-guarantees, ownership structures, post-registration flow, progress tracking).
-- Team page at /team (nav + footer linked): Tulasi Reddy — Founder (monogram card, two-salary quote,
-  role), EPOHTECH technology-partner card, "You? — Next Founder" recruitment card with Build CTA.
-  Photos/names of additional founders can be dropped in when provided.
-- WhatsApp chat button: floating green button on every page → wa.me/919640108029 with pre-filled
-  greeting. Data-testid whatsapp-chat-button.
-
-## Pending / Notes
-- Live Google OAuth round-trip not tested in-browser (needs a real Google account); all auth paths
-  verified via minted test sessions (admin, verified investor, founder).
-- The daily scheduler runs inside the backend process — if the pod is down at 07:00 UTC that day's
-  digest is skipped; the manual Send Now button always works.
-- Test data cleaned; DB starts fresh (insights re-seed automatically if emptied).
+## Pending Placeholders For User
+[Founder Name] + bio, [email], [phone], [City], [LinkedIn URL], [Company 1/2 descriptions],
+grievance officer [Name]/[email] on /privacy, [Date] last-updated on legal pages.
+Legal counsel must review /privacy, /terms, /disclaimer before go-live.
 
 ## Backlog
-- P1: Investor NDA/acknowledgement step before viewing sensitive opportunity details.
-- P1: Venture document visibility per-document (currently all docs follow venture visibility).
-- P2: JARVIS expansions — KPI anomaly alerts, weekly investor summary, application triage scoring.
-- P2: Analytics dashboards (conversion, cost per qualified lead).
-- P2: Dedicated campaign landing pages (/build-with-us, /invest-with-us aliases).
-- P2: Founder-facing document upload (founder shares files back with the studio).
+- P1: Replace bracketed placeholders with real details.
+- P1: Legal counsel review of the three legal pages.
+- P2: Founder photos on /team; LinkedIn/social links in footer.
+- P2: JARVIS KPI anomaly alerts; weekly investor recap email.

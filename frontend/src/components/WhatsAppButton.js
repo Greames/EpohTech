@@ -6,11 +6,11 @@ export default function WhatsAppButton() {
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 1.4, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      href="https://wa.me/919640108029?text=Hi%20Second%20Salary%20Capital%20%E2%80%94%20I%27d%20like%20to%20connect."
+      href="https://wa.me/919640108029?text=Hi%20Anvaya%20Partners%20%E2%80%94%20I%27d%20like%20to%20connect."
       target="_blank"
       rel="noopener noreferrer"
       data-testid="whatsapp-chat-button"
-      aria-label="Chat with Second Salary Capital on WhatsApp"
+      aria-label="Chat with Anvaya Partners on WhatsApp"
       className="fixed bottom-6 right-6 z-[65] group"
     >
       <span

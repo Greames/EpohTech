@@ -55,8 +55,8 @@ export default function AccountPage() {
             Sign in to your account
           </h1>
           <p className="mt-4 text-gray-400 text-sm leading-relaxed">
-            Track your founder applications and investor registrations inside the Second Salary
-            Capital ecosystem.
+            Track your founder applications and investor network applications inside Anvaya
+            Partners.
           </p>
           <button
             onClick={login}
@@ -134,7 +134,7 @@ export default function AccountPage() {
               {founderApps.length === 0 ? (
                 <div className="mt-6 text-sm text-gray-500 leading-relaxed">
                   No applications yet.{" "}
-                  <Link to="/build" className="text-champagne hover:text-champagneBright" data-testid="account-build-link">
+                  <Link to="/founders" className="text-champagne hover:text-champagneBright" data-testid="account-build-link">
                     Build with us →
                   </Link>
                 </div>

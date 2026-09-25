@@ -79,7 +79,7 @@ export default function FounderPortalPage() {
             <span className="text-champagne">{user.email}</span>, your workspace will appear here.
           </p>
           <Link
-            to="/build"
+            to="/founders"
             data-testid="founder-portal-apply-link"
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-champagne text-obsidian font-bold px-8 py-4 text-sm hover:bg-champagneBright transition-colors duration-300 gold-glow"
           >

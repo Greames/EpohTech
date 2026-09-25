@@ -383,7 +383,7 @@ export default function AdminPage() {
         <div className="text-center max-w-md">
           <Eyebrow>Restricted</Eyebrow>
           <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-white">Admin sign-in required</h1>
-          <p className="mt-4 text-gray-400 text-sm">This dashboard is reserved for the Second Salary Capital team.</p>
+          <p className="mt-4 text-gray-400 text-sm">This dashboard is reserved for the Anvaya Partners team.</p>
           <button
             onClick={login}
             data-testid="admin-google-signin-button"

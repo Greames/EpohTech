@@ -102,8 +102,8 @@ export default function OpportunitiesPage() {
             <MaskedLine delay={0.3}><span className="text-champagne">opportunities.</span></MaskedLine>
           </h1>
           <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed">
-            Ventures currently being built inside the Second Salary Capital ecosystem. Structured
-            information, visible progress, direct line to the studio.
+            Opportunities shared privately with verified members of the Anvaya Partners investor
+            network. Structured documentation, visible progress, direct line to the team.
           </p>
         </Reveal>
 

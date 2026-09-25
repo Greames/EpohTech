@@ -6,11 +6,11 @@ import { useAuth } from "@/context/AuthContext";
 
 const LINKS = [
   { label: "Home", path: "/" },
-  { label: "Build With Us", path: "/build" },
+  { label: "About", path: "/about" },
+  { label: "Approach", path: "/approach" },
+  { label: "Portfolio", path: "/portfolio" },
+  { label: "For Founders", path: "/founders" },
   { label: "For Investors", path: "/investors" },
-  { label: "What We Support", path: "/support" },
-  { label: "EPOHTECH", path: "/epohtech" },
-  { label: "Our Story", path: "/story" },
   { label: "Team", path: "/team" },
   { label: "Insights", path: "/insights" },
   { label: "Contact", path: "/contact" },
@@ -41,16 +41,16 @@ export default function HeaderNav() {
     <header
       data-testid="header-nav"
       className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 ${
-        scrolled ? "bg-obsidian/80 backdrop-blur-xl border-b border-white/5" : "bg-transparent border-b border-transparent"
+        scrolled ? "bg-obsidian/85 backdrop-blur-xl border-b border-white/5" : "bg-transparent border-b border-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
         <Link to="/" data-testid="nav-logo" className="flex items-baseline gap-2 group shrink-0">
           <span className="font-extrabold tracking-tight text-lg sm:text-xl text-white leading-none">
-            Second&nbsp;Salary
+            Anvaya
           </span>
-          <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] text-champagne group-hover:text-champagneBright transition-colors duration-300">
-            CAPITAL
+          <span className="font-mono text-[10px] sm:text-xs tracking-[0.35em] text-champagne group-hover:text-champagneBright transition-colors duration-300">
+            PARTNERS
           </span>
         </Link>
 
@@ -83,7 +83,7 @@ export default function HeaderNav() {
                   <img src={user.picture} alt="" className="h-7 w-7 rounded-full" referrerPolicy="no-referrer" />
                 ) : (
                   <span className="h-7 w-7 rounded-full bg-champagne/20 text-champagne flex items-center justify-center text-xs font-bold">
-                    {(user.name || "S")[0]}
+                    {(user.name || "A")[0]}
                   </span>
                 )}
                 <span className="text-xs text-gray-300 max-w-[110px] truncate">{user.name || user.email}</span>
@@ -107,11 +107,11 @@ export default function HeaderNav() {
             </button>
           )}
           <Link
-            to="/build"
-            data-testid="nav-cta-build"
-            className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-champagne text-obsidian text-xs font-bold tracking-wide px-5 py-2.5 hover:bg-champagneBright hover:gap-2.5 transition-all duration-300 gold-glow"
+            to="/founders"
+            data-testid="nav-cta-apply"
+            className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-champagne text-obsidian text-xs font-bold tracking-wide px-5 py-2.5 hover:bg-champagneBright hover:gap-2.5 transition-all duration-300"
           >
-            BUILD WITH US <ArrowUpRight size={14} />
+            APPLY AS FOUNDER <ArrowUpRight size={14} />
           </Link>
           <button
             onClick={() => setOpen(!open)}

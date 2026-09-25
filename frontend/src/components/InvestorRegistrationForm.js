@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -36,6 +37,7 @@ const INITIAL = {
 
 export default function InvestorRegistrationForm() {
   const [form, setForm] = useState(INITIAL);
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(null);
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -44,9 +46,9 @@ export default function InvestorRegistrationForm() {
     e.preventDefault();
     setLoading(true);
     try {
-      const r = await axios.post(`${API}/applications/investor`, form);
+      const r = await axios.post(`${API}/applications/investor`, { ...form, consent: true });
       setDone(r.data);
-      toast.success("Registration received — verification is underway.");
+      toast.success("Application received — verification follows.");
     } catch (err) {
       toast.error(err.response?.data?.detail || "Submission failed. Please try again.");
     } finally {
@@ -63,12 +65,11 @@ export default function InvestorRegistrationForm() {
         data-testid="investor-registration-success"
       >
         <ShieldCheck size={48} className="mx-auto text-champagne" />
-        <h3 className="mt-6 text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Verification underway.</h3>
+        <h3 className="mt-6 text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Application under review.</h3>
         <p className="mt-4 text-gray-400 max-w-md mx-auto leading-relaxed text-sm sm:text-base">
-          Your registration <span className="font-mono text-champagne text-xs">{done.registration_id}</span> is in
-          <strong className="text-white"> VERIFICATION</strong>. Once approved, live venture opportunities will be
-          waiting for you on the Opportunities page — sign in with this email to access them.
-          A confirmation email is on its way.
+          Your application <span className="font-mono text-champagne text-xs">{done.registration_id}</span> is in
+          <strong className="text-white"> VERIFICATION</strong>. The network is private and every member is
+          reviewed manually — our team will follow up with you directly. A confirmation email is on its way.
         </p>
       </motion.div>
     );
@@ -87,28 +88,38 @@ export default function InvestorRegistrationForm() {
         <Field label="Phone" name="phone" placeholder="+91 …" form={form} onChange={onChange} testId="investor-input-phone" />
         <Field label="Location" name="location" placeholder="City, State" form={form} onChange={onChange} testId="investor-input-location" />
         <Field label="LinkedIn" name="linkedin" placeholder="linkedin.com/in/…" form={form} onChange={onChange} testId="investor-input-linkedin" />
-        <Field label="Investment Range" name="investment_range" options={["₹10L – ₹25L", "₹25L – ₹1Cr", "₹1Cr – ₹5Cr", "₹5Cr – ₹10Cr+"]} form={form} onChange={onChange} testId="investor-input-investment-range" />
-        <Field label="Preferred Stage" name="investment_stage" options={["Idea / Validation", "Launch", "Traction", "Scale"]} form={form} onChange={onChange} testId="investor-input-stage" />
-        <Field label="Preferred Sectors" name="preferred_sectors" placeholder="e.g. Agri, Infra, SaaS, D2C" form={form} onChange={onChange} testId="investor-input-sectors" />
-        <Field label="Preferred Geography" name="preferred_geography" placeholder="e.g. India, Tier-2 cities" form={form} onChange={onChange} testId="investor-input-geography" />
-        <Field label="Investment Experience" name="investment_experience" options={["First-time investor", "Angel — a few deals", "Experienced — 5+ deals", "Institutional"]} form={form} onChange={onChange} testId="investor-input-experience" />
+        <Field label="Investor Profile" name="investment_range" options={["Individual investor", "HNI", "Family office", "Institutional / Fund"]} form={form} onChange={onChange} testId="investor-input-investment-range" />
+        <Field label="Preferred Company Stage" name="investment_stage" options={["Early / pre-revenue", "First revenue", "Scaling"]} form={form} onChange={onChange} testId="investor-input-stage" />
+        <Field label="Sectors of Interest" name="preferred_sectors" placeholder="e.g. Agri, Infra, SaaS, D2C" form={form} onChange={onChange} testId="investor-input-sectors" />
+        <Field label="Geography" name="preferred_geography" placeholder="e.g. India" form={form} onChange={onChange} testId="investor-input-geography" />
+        <Field label="Investment Experience" name="investment_experience" options={["First-time investor", "Some private investments", "Experienced — 5+ investments", "Institutional"]} form={form} onChange={onChange} testId="investor-input-experience" />
         <Field label="Strategic Expertise" name="strategic_expertise" placeholder="e.g. Distribution, Manufacturing, GTM" form={form} onChange={onChange} testId="investor-input-expertise" />
       </div>
       <Field label="Notes" name="notes" textarea placeholder="Anything else we should know?" form={form} onChange={onChange} testId="investor-input-notes" />
 
-      <p className="text-[11px] text-gray-600 leading-relaxed font-mono">
-        Registration does not guarantee allocation, returns or exits. All venture opportunities involve risk
-        and are shared only after verification.
+      <p className="text-[11px] text-gray-600 leading-relaxed font-mono" data-testid="investor-form-compliance-note">
+        Anvaya Partners does not manage or pool investors' money. Membership does not guarantee access
+        to any opportunity, and nothing here is an offer or solicitation of securities. Early-stage
+        investing involves high risk, including possible loss of the entire amount invested.
       </p>
+
+      <label className="flex items-start gap-3 text-xs text-gray-400 leading-relaxed cursor-pointer">
+        <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} data-testid="investor-consent-checkbox" className="mt-0.5 h-4 w-4 accent-[#E6C280]" />
+        <span>
+          I consent to Anvaya Partners Private Limited processing my information to review my network
+          application, as described in the{" "}
+          <Link to="/privacy" className="text-champagne underline underline-offset-2">Privacy Policy</Link> (DPDP Act, 2023).
+        </span>
+      </label>
 
       <button
         type="submit"
         disabled={loading}
         data-testid="investor-registration-submit-button"
-        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-champagne text-obsidian font-bold tracking-wide px-10 py-4 text-sm hover:bg-champagneBright transition-colors duration-300 disabled:opacity-60 gold-glow"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-champagne text-obsidian font-bold tracking-wide px-10 py-4 text-sm hover:bg-champagneBright transition-colors duration-300 disabled:opacity-60"
       >
         {loading ? <Loader2 size={16} className="animate-spin" /> : null}
-        {loading ? "SUBMITTING…" : "JOIN THE INVESTOR NETWORK"}
+        {loading ? "SUBMITTING…" : "APPLY TO JOIN THE NETWORK"}
       </button>
     </form>
   );

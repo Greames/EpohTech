@@ -1,13 +1,11 @@
 const WORDS = [
-  "Company Building",
-  "Capital",
-  "Technology",
-  "Founders",
-  "Investors",
-  "Market Intelligence",
-  "EPOHTECH",
-  "Validation",
-  "Scale",
+  "Conviction",
+  "Partnership",
+  "Discipline",
+  "Integrity",
+  "Own Capital",
+  "Hands-On",
+  "Long-Term",
 ];
 
 export default function EditorialMarquee() {

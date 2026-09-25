@@ -6,52 +6,52 @@ import { Reveal, Eyebrow } from "@/components/Reveal";
 
 export const ARTICLES = [
   {
-    slug: "why-second-salary",
-    category: "Origin Story",
-    title: "Why Second Salary?",
+    slug: "why-anvaya",
+    category: "The Firm",
+    title: "Why 'Anvaya'?",
+    read: "3 min",
+    excerpt: "Anvaya is Sanskrit for 'bringing together' — founders with ambition, investors with conviction, and a partner committed to both.",
+    body: "Names carry intent. Anvaya (अन्वय) is Sanskrit for 'bringing together' — and that is precisely what this firm exists to do. On one side, founders with ambition: people building real companies who need more than money. On the other, investors with conviction: people who want to back real businesses, not lottery tickets. Anvaya Partners stands between them, committed to both — investing our own capital first, and then working hands-on inside every company we back. Bringing together is not a slogan. It is the operating model.",
+  },
+  {
+    slug: "capital-efficient-by-design",
+    category: "Approach",
+    title: "Capital-Efficient by Design",
     read: "4 min",
-    excerpt: "The name is not about a second income. It is the true story of two salaries, gratitude, and a leap into company building.",
-    body: "After college, our founders took their first jobs like everyone else. The first salary went to their parents and to God — gratitude before ambition. The second salary went somewhere unusual: it became seed capital for their own company. That decision, made with one month's pay, is the entire philosophy of Second Salary Capital. You do not need permission, inheritance or a fund behind you to start building. You need conviction and one month's courage. We built this studio so that the next founder gets more than a month's salary behind their leap — they get capital, technology, and a full operating ecosystem.",
+    excerpt: "We back businesses built to reach sustainable revenue early — not ones that burn cash chasing growth.",
+    body: "Burn is a choice, not a strategy. When we evaluate a company, the first question is not 'how fast can it grow with unlimited capital' but 'how soon can it sustain itself'. Businesses built to reach sustainable revenue early make better decisions: they price honestly, they hire carefully, and they listen to customers because they have to. Capital then accelerates what already works instead of subsidising what doesn't. That is what capital-efficient means in practice — and it is the only kind of company we back.",
+  },
+  {
+    slug: "what-operator-led-means",
+    category: "Approach",
+    title: "What Operator-Led Actually Means",
+    read: "4 min",
+    excerpt: "A decade of building and integrating enterprise systems — applied to every company we back.",
+    body: "Many investors advise. Fewer operate. Our team spent a decade building and integrating enterprise systems for large organisations — the unglamorous work of making strategy survive contact with reality. In every company we back, that experience shows up as real work: designing the go-to-market, setting up the finance stack, choosing the technology, building the operating rhythm. We work inside the company, next to the founder — not around it, from a distance.",
   },
   {
     slug: "how-we-evaluate",
-    category: "Investment Education",
-    title: "How We Evaluate Opportunities",
-    read: "6 min",
-    excerpt: "Market size, founder fit, unit economics and timing — the four questions every venture must answer before capital moves.",
-    body: "Before a single rupee moves, every proposed company passes through defined stages: idea, screen, market research, validation, founder match, business model and capital planning. We ask four questions. Is the market real and measurable? Is the founder the right person — with domain expertise and full-time commitment? Do the unit economics work at small scale before they work at big scale? And why is now the right time? Most ideas fail one of these. That is the point of a studio: kill weak ideas cheaply, and pour shared resources into the ones that survive.",
-  },
-  {
-    slug: "build-in-public-validation",
-    category: "Company Building",
-    title: "What We Learned Validating Ventures",
+    category: "Investment Notes",
+    title: "How We Evaluate a Company",
     read: "5 min",
-    excerpt: "Customer conversations beat spreadsheets. Lessons from taking ideas through our validation process.",
-    body: "Every venture in our pipeline goes through structured validation: customer interviews, competitor teardown, pricing tests and market sizing from the bottom up. The consistent lesson: founders fall in love with solutions, but markets only pay for problems. Our validation stage forces the problem first — who hurts, how much, and what they already pay to make it stop. When we cannot find the pain, we do not build. When we find it and the founder can reach it, we move fast: capital, technology and business support arrive together, not sequentially.",
+    excerpt: "Discover, Evaluate, Invest, Build together — what we actually test at each stage.",
+    body: "Our process has four stages. Discover: we understand the opportunity in its own terms — the market, the problem, the person. Evaluate: we test all three rigorously — is the market real, does the model sustain itself early, is this the founder who will outlast the hard years? If the evidence is not there, we say so early and honestly. Invest: we commit our own capital with a structure both sides understand completely. Build together: then the real work begins — strategy, technology, finance, operations, go-to-market — side by side with the founder, for years.",
   },
   {
-    slug: "ai-traditional-business",
-    category: "Technology",
-    title: "How AI Changes Traditional Businesses",
-    read: "5 min",
-    excerpt: "Automation is not about replacing people — it is about letting a five-person venture operate like a fifty-person company.",
-    body: "Through EPOHTECH, every venture in our ecosystem gets access to applied AI and automation from day one. The biggest gains are unglamorous: automated follow-ups in sales, intelligent document processing in operations, forecasting in finance, and support systems that answer before a human wakes up. A traditional business with modern tooling does not just move faster — it compounds. Data from every process feeds the next decision. That is the technology dividend we build into every company we create.",
-  },
-  {
-    slug: "what-we-look-for-founders",
-    category: "Founder Stories",
+    slug: "what-we-look-for",
+    category: "Founders",
     title: "What We Look For in a Founder",
     read: "4 min",
-    excerpt: "Domain depth, full-time commitment and coachability matter more than a polished pitch deck.",
-    body: "We have reviewed founders with beautiful decks and no customers, and founders with grease on their hands and a waiting list. We choose the second kind. What we look for: real domain expertise earned inside an industry, the willingness to go full-time, the humility to be challenged during validation, and the stamina for a multi-year build. Equity in our ventures is not a fixed formula — it reflects what the founder brings: idea, experience, customers, capital and commitment. Bring more, own more.",
+    excerpt: "Clarity of thought, capital discipline, domain depth — and a years-not-quarters mindset.",
+    body: "We look for four things. Clarity of thought: the founder can explain the business simply, because they understand it deeply. Capital discipline: they treat money as something earned, not something to spend. Domain depth: they know their industry from the inside — its customers, its inefficiencies, its unwritten rules. And temperament: building takes years, and we partner with people whose horizon matches ours. Decks matter less than conversations. If you have these four, we would like to meet you.",
   },
   {
-    slug: "inside-the-ecosystem",
-    category: "Behind the Scenes",
-    title: "Inside the Second Salary Ecosystem",
-    read: "7 min",
-    excerpt: "How founders, investors, EPOHTECH and our operating team fit together to build companies repeatedly.",
-    body: "Second Salary Capital sits at the centre of four forces. Founders bring leadership and execution. Investors — 80+ onboarded today — bring capital and strategic support. EPOHTECH brings technology: software, AI, cloud, ERP and IT operations. And the studio itself brings the operating framework: market research, strategy, legal and CA coordination, marketing, recruitment and business development. Every venture draws from all four. That is what makes it a studio rather than a fund — we do not write cheques and wait. We build, launch, grow, and stay in the trenches through scale and, eventually, liquidity.",
+    slug: "beyond-the-first-cheque",
+    category: "Partnership",
+    title: "A Partner Beyond the First Cheque",
+    read: "3 min",
+    excerpt: "Introductions to our verified investor network, follow-on support, and a relationship measured in years.",
+    body: "The first cheque is the beginning, not the product. As companies mature, they need more than our own capital — so we make introductions to our verified investor network, privately and deliberately. We stay involved through the hard middle: hiring, pricing, systems, the second product, the second city. Our horizon is years, not quarters, because that is how long real companies take. Partnership, for us, is a duration — not a sentiment.",
   },
 ];
 
@@ -77,10 +77,10 @@ export default function InsightsSection() {
         <Reveal className="max-w-3xl">
           <Eyebrow>Insights</Eyebrow>
           <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.05]">
-            Inside the <span className="text-champagne">Build</span>
+            Notes on building, <span className="text-champagne">written as we build.</span>
           </h2>
           <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed">
-            Founder stories, market research, technology notes and lessons from building businesses — written as we build.
+            How we think about companies, capital and partnerships — and what we learn along the way.
           </p>
         </Reveal>
 
