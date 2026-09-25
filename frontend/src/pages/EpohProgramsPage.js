@@ -5,6 +5,7 @@ import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
 const PROGRAMS = [
   {
     icon: Database,
+    slug: "big-data-engineering",
     title: "Big Data Engineering",
     tag: "Cohort Program",
     body: "A practitioner-led program covering the full data engineering discipline — pipelines, warehousing, ETL and large-scale processing — taught by engineers who build and run these systems in production.",
@@ -19,6 +20,7 @@ const PROGRAMS = [
   },
   {
     icon: Layers,
+    slug: "oracle-fusion-oic",
     title: "Oracle Fusion with OIC",
     tag: "Cohort Program",
     body: "Hands-on Oracle Fusion and Oracle Integration Cloud training led by certified Oracle professionals — from technical fundamentals to delivering end-to-end integration solutions for enterprise environments.",
@@ -74,11 +76,11 @@ export default function EpohProgramsPage() {
                   ))}
                 </ul>
                 <Link
-                  to={`/epohtech/contact?interest=${encodeURIComponent(p.interest)}`}
+                  to={`/epohtech/programs/${p.slug}`}
                   data-testid={`${p.testId}-register-button`}
                   className="group mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-champagne text-obsidian font-bold tracking-wide px-8 py-3.5 text-sm hover:bg-champagneBright transition-colors duration-300"
                 >
-                  REGISTER INTEREST <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  VIEW PROGRAM &amp; REGISTER <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
               </div>
             </Reveal>

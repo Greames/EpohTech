@@ -54,6 +54,20 @@ export default function EpohHomePage() {
           </div>
         </Reveal>
 
+        {/* Client credibility strip */}
+        <Reveal className="mt-20">
+          <div data-testid="epoh-clients-strip" className="border-y border-white/5 py-10">
+            <p className="text-center font-mono text-[10px] uppercase tracking-[0.35em] text-gray-600">
+              Running technology for
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-14 gap-y-4">
+              <span data-testid="epoh-client-dawn-fresh" className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">Dawn Fresh</span>
+              <span data-testid="epoh-client-volt-valve" className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">Volt &amp; Valve</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gray-600">+ every Anvaya Partners company</span>
+            </div>
+          </div>
+        </Reveal>
+
         {/* Services */}
         <div className="mt-24 md:mt-32">
           <Reveal className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">

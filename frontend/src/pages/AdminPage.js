@@ -22,6 +22,7 @@ const TABS = [
   { id: "investors", label: "Investor Registrations" },
   { id: "insights", label: "Insights" },
   { id: "messages", label: "Messages" },
+  { id: "epoh", label: "EPOHTECH Enquiries" },
 ];
 const EMPTY_VENTURE = {
   name: "", industry: "", stage: "Validation", description: "",
@@ -70,6 +71,7 @@ export default function AdminPage() {
   const [founders, setFounders] = useState([]);
   const [investors, setInvestors] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [epohEnquiries, setEpohEnquiries] = useState([]);
   const [insights, setInsights] = useState([]);
   const [ventures, setVentures] = useState([]);
   const [interests, setInterests] = useState([]);
@@ -84,7 +86,7 @@ export default function AdminPage() {
   const loadAll = useCallback(async () => {
     setBusy(true);
     try {
-      const [ov, fa, ir, cm, ins, ve, ints] = await Promise.all([
+      const [ov, fa, ir, cm, ins, ve, ints, ee] = await Promise.all([
         axios.get(`${API}/admin/overview`),
         axios.get(`${API}/admin/founder-applications`),
         axios.get(`${API}/admin/investor-registrations`),
@@ -92,6 +94,7 @@ export default function AdminPage() {
         axios.get(`${API}/admin/insights`),
         axios.get(`${API}/admin/ventures`),
         axios.get(`${API}/admin/interests`),
+        axios.get(`${API}/admin/epoh-enquiries`),
       ]);
       setOverview(ov.data);
       setFounders(fa.data.applications || []);
@@ -100,6 +103,7 @@ export default function AdminPage() {
       setInsights(ins.data.insights || []);
       setVentures(ve.data.ventures || []);
       setInterests(ints.data.interests || []);
+      setEpohEnquiries(ee.data.enquiries || []);
       setDenied(false);
     } catch (e) {
       if (e.response?.status === 403) setDenied(true);
@@ -1000,6 +1004,24 @@ export default function AdminPage() {
                   {m.email} · {m.created_at ? new Date(m.created_at).toLocaleString() : ""}
                 </p>
                 <p className="mt-3 text-sm text-gray-300 leading-relaxed">{m.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {tab === "epoh" && (
+          <div className="mt-10 space-y-4" data-testid="admin-epoh-enquiries-list">
+            {epohEnquiries.length === 0 && <p className="text-gray-500 text-sm">No EPOHTECH enquiries yet.</p>}
+            {epohEnquiries.map((q) => (
+              <div key={q.enquiry_id} data-testid={`admin-epoh-enquiry-${q.enquiry_id}`} className="rounded-2xl border border-white/5 bg-charcoal/50 p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h3 className="text-base font-bold text-white">{q.name}</h3>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-champagne">{q.interest}</span>
+                </div>
+                <p className="font-mono text-[10px] text-gray-600 mt-1">
+                  {q.email}{q.phone ? ` · ${q.phone}` : ""} · {q.created_at ? new Date(q.created_at).toLocaleString() : ""}
+                </p>
+                <p className="mt-3 text-sm text-gray-300 leading-relaxed">{q.message}</p>
               </div>
             ))}
           </div>
