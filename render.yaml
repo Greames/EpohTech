@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: anvaya-partners-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: anvaya_partners
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ADMIN_EMAILS
+        sync: false
+      - key: EMERGENT_LLM_KEY
+        sync: false
+      - key: INTEGRATION_PROXY_URL
+        value: https://integrations.emergentagent.com
+      - key: EMERGENT_EMAIL_KEY
+        sync: false
+      - key: OWNER_NOTIFY_EMAIL
+        sync: false
+      - key: EMAIL_FROM_NAME
+        value: Anvaya Partners
+      - key: EMAIL_REPLY_TO
+        sync: false
