@@ -33,7 +33,7 @@
         <div id="root"></div>
         <!-- Registers the EPOHTECH enquiry form with Netlify Forms at deploy time.
              Field names must match the form in src/pages/EpohContactPage.js. -->
-        <form name="epoh-enquiry" data-netlify="true" netlify-honeypot="bot-field" hidden>
+        <form name="epoh-enquiry" action="/enquiry-received.html" data-netlify="true" netlify-honeypot="bot-field" hidden>
             <input type="text" name="name" />
             <input type="text" name="phone" />
             <input type="email" name="email" />
