@@ -17,8 +17,7 @@ const INTERESTS = [
   "Oracle ERP & OIC Services",
   "IT Strategy & Consulting",
   "Custom Software Development",
-  "Big Data Engineering Program",
-  "Oracle Fusion with OIC Program",
+  "Internship Program",
   "Corporate Training",
   "Other",
 ];

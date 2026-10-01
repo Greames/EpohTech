@@ -2,14 +2,30 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
 
+// To show a logo, add the file to frontend/public/clients/ and set `logo`
+// (e.g. logo: "/clients/accion-labs.svg"). Without one, the name is shown.
+// Logos are rendered as white silhouettes, so use transparent SVG/PNG files.
 export const CONSULTING_CLIENTS = [
-  "Accion Labs",
-  "Swift Navigation",
-  "Strive4x",
-  "Infolob",
-  "Hindsight Software Solutions",
-  "CARE Hospitals",
+  { name: "Accion Labs", logo: null },
+  { name: "Swift Navigation", logo: null },
+  { name: "Strive4x", logo: null },
+  { name: "Infolob", logo: null },
+  { name: "Hindsight Software Solutions", logo: null },
+  { name: "CARE Hospitals", logo: null },
 ];
+
+export const ClientMark = ({ client, className = "" }) =>
+  client.logo ? (
+    <img
+      src={client.logo}
+      alt={client.name}
+      title={client.name}
+      loading="lazy"
+      className="h-8 sm:h-9 w-auto max-w-[160px] object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity duration-500"
+    />
+  ) : (
+    <span className={className}>{client.name}</span>
+  );
 
 const REGIONS = [
   {
@@ -61,12 +77,11 @@ export default function EpohConsulting() {
           <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-gray-600">Clients we support</p>
           <ul className="mt-6 grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
             {CONSULTING_CLIENTS.map((c) => (
-              <li
-                key={c}
-                data-testid={`epoh-consulting-client-${slug(c)}`}
-                className="font-extrabold tracking-tight text-lg sm:text-xl text-gray-300 hover:text-champagne transition-colors duration-500"
-              >
-                {c}
+              <li key={c.name} data-testid={`epoh-consulting-client-${slug(c.name)}`} className="flex items-center">
+                <ClientMark
+                  client={c}
+                  className="font-extrabold tracking-tight text-lg sm:text-xl text-gray-300 hover:text-champagne transition-colors duration-500"
+                />
               </li>
             ))}
           </ul>

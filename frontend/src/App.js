@@ -24,7 +24,6 @@ import EpohLayout from "@/components/EpohLayout";
 import EpohHomePage from "@/pages/EpohHomePage";
 import EpohServicesPage from "@/pages/EpohServicesPage";
 import EpohProgramsPage from "@/pages/EpohProgramsPage";
-import EpohProgramDetailPage from "@/pages/EpohProgramDetailPage";
 import EpohAboutPage from "@/pages/EpohAboutPage";
 import EpohContactPage from "@/pages/EpohContactPage";
 import AccountPage from "@/pages/AccountPage";
@@ -65,7 +64,7 @@ function AppRouter() {
         <Route index element={<EpohHomePage />} />
         <Route path="services" element={<EpohServicesPage />} />
         <Route path="programs" element={<EpohProgramsPage />} />
-        <Route path="programs/:slug" element={<EpohProgramDetailPage />} />
+        <Route path="programs/:slug" element={<Navigate to="/epohtech/programs" replace />} />
         <Route path="about" element={<EpohAboutPage />} />
         <Route path="contact" element={<EpohContactPage />} />
       </Route>
