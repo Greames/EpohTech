@@ -31,6 +31,17 @@
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root"></div>
+        <!-- Registers the EPOHTECH enquiry form with Netlify Forms at deploy time.
+             Field names must match the form in src/pages/EpohContactPage.js. -->
+        <form name="epoh-enquiry" data-netlify="true" netlify-honeypot="bot-field" hidden>
+            <input type="text" name="name" />
+            <input type="text" name="phone" />
+            <input type="email" name="email" />
+            <input type="text" name="interest" />
+            <textarea name="message"></textarea>
+            <input type="text" name="consent" />
+            <input type="text" name="bot-field" />
+        </form>
         <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

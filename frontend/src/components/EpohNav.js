@@ -37,7 +37,7 @@ export default function EpohNav() {
           <span className="font-extrabold tracking-tight text-lg sm:text-xl text-white leading-none">
             EPOH<span className="text-champagne group-hover:text-champagneBright transition-colors duration-300">TECH</span>
           </span>
-          <span className="hidden md:inline font-mono text-[9px] tracking-[0.3em] text-gray-500 uppercase">
+          <span className="hidden xl:inline font-mono text-[9px] tracking-[0.3em] text-gray-500 uppercase">
             An Anvaya Partners Company
           </span>
         </Link>
@@ -72,7 +72,7 @@ export default function EpohNav() {
             data-testid="epoh-nav-cta-contact"
             className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-champagne text-obsidian text-xs font-bold tracking-wide px-5 py-2.5 hover:bg-champagneBright hover:gap-2.5 transition-all duration-300"
           >
-            START A CONVERSATION <ArrowUpRight size={14} />
+            BOOK A CONSULTATION <ArrowUpRight size={14} />
           </Link>
           <button
             onClick={() => setOpen(!open)}

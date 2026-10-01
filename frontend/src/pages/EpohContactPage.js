@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle2, Loader2, Mail, Phone, MapPin } from "lucide-react";
 import { toast } from "sonner";
-import axios, { API } from "@/lib/api";
 import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
 
 const inputCls =
@@ -42,11 +41,23 @@ export default function EpohContactPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post(`${API}/epoh/enquiry`, { ...form, consent });
+      // Netlify Forms stores the lead and emails it to the configured recipients.
+      const body = new URLSearchParams({
+        "form-name": "epoh-enquiry",
+        "bot-field": e.target.elements["bot-field"].value,
+        ...form,
+        consent: consent ? "yes" : "no",
+      });
+      const res = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setDone(true);
       toast.success("Enquiry sent — we'll be in touch.");
-    } catch (err) {
-      toast.error(err.response?.data?.detail || "Could not send. Please try again.");
+    } catch {
+      toast.error("Could not send. Please email assist@theepoh.com or try again.");
     } finally {
       setLoading(false);
     }
@@ -59,8 +70,8 @@ export default function EpohContactPage() {
           <Reveal>
             <Eyebrow>Contact</Eyebrow>
             <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.02]">
-              <MaskedLine delay={0.15}><span>Start a</span></MaskedLine>
-              <MaskedLine delay={0.3}><span className="text-champagne">conversation.</span></MaskedLine>
+              <MaskedLine delay={0.15}><span>Book a</span></MaskedLine>
+              <MaskedLine delay={0.3}><span className="text-champagne">consultation.</span></MaskedLine>
             </h1>
             <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed max-w-md">
               Ready to transform your business with technology that works? Tell us what you
@@ -104,10 +115,14 @@ export default function EpohContactPage() {
               </motion.div>
             ) : (
               <form
+                name="epoh-enquiry"
                 onSubmit={submit}
                 data-testid="epoh-contact-form"
                 className="rounded-3xl border border-white/10 bg-charcoal/60 p-8 sm:p-10 space-y-5"
               >
+                <p hidden>
+                  <label>Leave this empty: <input name="bot-field" tabIndex={-1} autoComplete="off" /></label>
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label htmlFor="epoh-name" className={labelCls}>Full Name *</label>
@@ -151,7 +166,7 @@ export default function EpohContactPage() {
                   data-testid="epoh-contact-submit-button"
                   className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-champagne text-obsidian font-bold tracking-wide px-8 py-4 text-sm hover:bg-champagneBright transition-colors duration-300 disabled:opacity-50"
                 >
-                  {loading ? <Loader2 size={16} className="animate-spin" /> : "SEND MESSAGE"}
+                  {loading ? <Loader2 size={16} className="animate-spin" /> : "SEND ENQUIRY"}
                 </button>
               </form>
             )}

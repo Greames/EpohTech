@@ -48,7 +48,7 @@ export default function EpohHomePage() {
               data-testid="epoh-hero-contact-button"
               className="inline-flex items-center gap-2 rounded-full border border-champagne/50 text-champagne font-bold tracking-wide px-8 py-3.5 text-sm hover:bg-champagne hover:text-obsidian transition-colors duration-300"
             >
-              START A CONVERSATION
+              BOOK A CONSULTATION
             </Link>
           </div>
         </Reveal>
@@ -213,7 +213,7 @@ export default function EpohHomePage() {
               data-testid="epoh-home-cta-button"
               className="group mt-8 inline-flex items-center gap-2 rounded-full bg-champagne text-obsidian font-bold tracking-wide px-9 py-4 text-sm hover:bg-champagneBright transition-colors duration-300"
             >
-              START A CONVERSATION <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              BOOK A CONSULTATION <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
         </Reveal>
