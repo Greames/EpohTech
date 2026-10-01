@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Database, LineChart, Layers, Compass, Code2, Workflow, BarChart3, Factory } from "lucide-react";
 import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
+import EpohConsulting, { CONSULTING_CLIENTS } from "@/components/EpohConsulting";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHx0ZWNoJTIwc29mdHdhcmUlMjBlbmdpbmVlciUyMGNvZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85";
 const PROGRAMS_IMG = "https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwyfHx0ZWNoJTIwc29mdHdhcmUlMjBlbmdpbmVlciUyMGNvZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85";
@@ -56,9 +57,12 @@ export default function EpohHomePage() {
         <Reveal className="mt-20">
           <div data-testid="epoh-clients-strip" className="border-y border-white/5 py-10">
             <p className="text-center font-mono text-[10px] uppercase tracking-[0.35em] text-gray-600">
-              Running technology for
+              Trusted by teams in India &amp; the US
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-14 gap-y-4">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
+              {CONSULTING_CLIENTS.map((c) => (
+                <span key={c} className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">{c}</span>
+              ))}
               <span data-testid="epoh-client-dawn-fresh" className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">Dawn Fresh</span>
               <span data-testid="epoh-client-volt-valve" className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">Volt &amp; Valve</span>
               <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gray-600">+ every Anvaya Partners company</span>
@@ -100,6 +104,9 @@ export default function EpohHomePage() {
             ))}
           </div>
         </div>
+
+        {/* Consulting */}
+        <EpohConsulting />
 
         {/* Story band */}
         <div className="mt-28 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">

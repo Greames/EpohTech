@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Database, LineChart, Layers, Compass, Code2, Workflow, BarChart3, Factory } from "lucide-react";
 import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
+import EpohConsulting from "@/components/EpohConsulting";
 
 const SERVICES = [
   {
@@ -75,6 +76,8 @@ export default function EpohServicesPage() {
             </Reveal>
           ))}
         </div>
+
+        <EpohConsulting />
 
         <div className="mt-28">
           <Reveal>
