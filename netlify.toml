@@ -10,6 +10,19 @@
   CI = "false"
   GENERATE_SOURCEMAP = "false"
 
+# theepoh.com opens on the EPOHTECH home page; other domains keep Anvaya at /.
+[[redirects]]
+  from = "https://theepoh.com/"
+  to = "https://theepoh.com/epohtech"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "https://www.theepoh.com/"
+  to = "https://theepoh.com/epohtech"
+  status = 302
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
