@@ -1,0 +1,16 @@
+# Build the React frontend from /frontend and serve it as a single-page app.
+[build]
+  base = "frontend"
+  command = "yarn build"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # CRA treats lint warnings as errors when CI is set.
+  CI = "false"
+  GENERATE_SOURCEMAP = "false"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
