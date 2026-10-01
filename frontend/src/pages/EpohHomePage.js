@@ -59,14 +59,12 @@ export default function EpohHomePage() {
             <p className="text-center font-mono text-[10px] uppercase tracking-[0.35em] text-gray-600">
               Trusted by teams in India &amp; the US
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
+            <div className="mt-6 mx-auto max-w-3xl grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               {CONSULTING_CLIENTS.map((c) => (
-                <ClientMark
-                  key={c.name}
-                  client={c}
-                  className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500"
-                />
+                <ClientMark key={c.name} client={c} />
               ))}
+            </div>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
               <span data-testid="epoh-client-dawn-fresh" className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">Dawn Fresh</span>
               <span data-testid="epoh-client-volt-valve" className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">Volt &amp; Valve</span>
               <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gray-600">+ every Anvaya Partners company</span>

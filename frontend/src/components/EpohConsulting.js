@@ -3,30 +3,38 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
 
-// To show a logo, add the file to frontend/public/clients/ and set `logo`
-// (e.g. logo: "/clients/accion-labs.svg"). Without one, the name is shown.
-// Logos are rendered as white silhouettes, so use transparent SVG/PNG files.
+// `logo` is a file in frontend/public/clients/ (e.g. "/clients/acme.svg") or the
+// client's official logo URL. Logos show in full colour on a light tile, so files
+// with white backgrounds work too. Without a logo (or if it fails to load) the
+// client's name is shown on the tile instead.
 export const CONSULTING_CLIENTS = [
   { name: "Accion Labs", logo: "https://www.accionlabs.com/hubfs/Accion%20HubSpot%20Website/Logos%20and%20Icons/Accion%20Labs/Accion%20Labs%20Logo_Color-1.svg" },
   { name: "Swift Navigation", logo: "https://www.swiftnav.com/wp-content/uploads/2025/02/logo-black.svg" },
-  { name: "Strive4x", logo: null },
+  { name: "Strive4x", logo: "https://strive4x.net/assets/img/logo.png" },
   { name: "Infolob", logo: null },
   { name: "Hindsight Software Solutions", logo: "/clients/hindsight-software-solutions.png" },
-  { name: "CARE Hospitals", logo: null },
+  { name: "CARE Hospitals", logo: "https://www.carehospitals.com/assets/images/cares-logo.webp" },
 ];
 
-export const ClientMark = ({ client, className = "" }) => {
+export const ClientMark = ({ client }) => {
   const [failed, setFailed] = useState(false);
-  if (!client.logo || failed) return <span className={className}>{client.name}</span>;
   return (
-    <img
-      src={client.logo}
-      alt={client.name}
+    <span
       title={client.name}
-      loading="lazy"
-      onError={() => setFailed(true)}
-      className="h-9 sm:h-11 w-auto max-w-[200px] sm:max-w-[240px] object-contain brightness-0 invert opacity-75 hover:opacity-100 transition-opacity duration-500"
-    />
+      className="flex h-14 sm:h-16 w-full items-center justify-center rounded-xl bg-white px-4 ring-1 ring-white/10 hover:-translate-y-0.5 transition-transform duration-500"
+    >
+      {client.logo && !failed ? (
+        <img
+          src={client.logo}
+          alt={client.name}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="max-h-9 sm:max-h-10 max-w-full w-auto object-contain"
+        />
+      ) : (
+        <span className="text-center text-sm font-extrabold tracking-tight text-obsidian leading-tight">{client.name}</span>
+      )}
+    </span>
   );
 };
 
@@ -78,13 +86,10 @@ export default function EpohConsulting() {
       <Reveal className="mt-5">
         <div className="rounded-2xl border border-white/5 bg-obsidian/60 p-8 sm:p-10">
           <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-gray-600">Clients we support</p>
-          <ul className="mt-6 grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
+          <ul className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {CONSULTING_CLIENTS.map((c) => (
-              <li key={c.name} data-testid={`epoh-consulting-client-${slug(c.name)}`} className="flex items-center">
-                <ClientMark
-                  client={c}
-                  className="font-extrabold tracking-tight text-lg sm:text-xl text-gray-300 hover:text-champagne transition-colors duration-500"
-                />
+              <li key={c.name} data-testid={`epoh-consulting-client-${slug(c.name)}`} className="flex">
+                <ClientMark client={c} />
               </li>
             ))}
           </ul>
