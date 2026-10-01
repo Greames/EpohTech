@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
@@ -6,26 +7,28 @@ import { Reveal, Eyebrow } from "@/components/Reveal";
 // (e.g. logo: "/clients/accion-labs.svg"). Without one, the name is shown.
 // Logos are rendered as white silhouettes, so use transparent SVG/PNG files.
 export const CONSULTING_CLIENTS = [
-  { name: "Accion Labs", logo: null },
-  { name: "Swift Navigation", logo: null },
+  { name: "Accion Labs", logo: "https://www.accionlabs.com/hubfs/Accion%20HubSpot%20Website/Logos%20and%20Icons/Accion%20Labs/Accion%20Labs%20Logo_Color-1.svg" },
+  { name: "Swift Navigation", logo: "https://www.swiftnav.com/wp-content/uploads/2025/02/logo-black.svg" },
   { name: "Strive4x", logo: null },
   { name: "Infolob", logo: null },
-  { name: "Hindsight Software Solutions", logo: null },
+  { name: "Hindsight Software Solutions", logo: "/clients/hindsight-software-solutions.png" },
   { name: "CARE Hospitals", logo: null },
 ];
 
-export const ClientMark = ({ client, className = "" }) =>
-  client.logo ? (
+export const ClientMark = ({ client, className = "" }) => {
+  const [failed, setFailed] = useState(false);
+  if (!client.logo || failed) return <span className={className}>{client.name}</span>;
+  return (
     <img
       src={client.logo}
       alt={client.name}
       title={client.name}
       loading="lazy"
-      className="h-8 sm:h-9 w-auto max-w-[160px] object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity duration-500"
+      onError={() => setFailed(true)}
+      className="h-9 sm:h-11 w-auto max-w-[200px] sm:max-w-[240px] object-contain brightness-0 invert opacity-75 hover:opacity-100 transition-opacity duration-500"
     />
-  ) : (
-    <span className={className}>{client.name}</span>
   );
+};
 
 const REGIONS = [
   {
