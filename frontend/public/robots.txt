@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://theepoh.com/sitemap.xml

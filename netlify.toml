@@ -23,6 +23,93 @@
   status = 302
   force = true
 
+# Old theepoh.com pages (previous site) -> their EPOHTECH equivalents, so existing
+# links and search results keep working. Paths are the usual slugs for the old
+# site's menu (About Us, Our Services, Our Solutions, Contact Us, Careers).
+[[redirects]]
+  from = "https://theepoh.com/about-us"
+  to = "https://theepoh.com/epohtech/about"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.theepoh.com/about-us"
+  to = "https://theepoh.com/epohtech/about"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://theepoh.com/our-services"
+  to = "https://theepoh.com/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.theepoh.com/our-services"
+  to = "https://theepoh.com/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://theepoh.com/our-solutions"
+  to = "https://theepoh.com/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.theepoh.com/our-solutions"
+  to = "https://theepoh.com/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://theepoh.com/solutions"
+  to = "https://theepoh.com/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.theepoh.com/solutions"
+  to = "https://theepoh.com/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://theepoh.com/contact-us"
+  to = "https://theepoh.com/epohtech/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.theepoh.com/contact-us"
+  to = "https://theepoh.com/epohtech/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://theepoh.com/careers"
+  to = "https://theepoh.com/epohtech/programs"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.theepoh.com/careers"
+  to = "https://theepoh.com/epohtech/programs"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://theepoh.com/career"
+  to = "https://theepoh.com/epohtech/programs"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.theepoh.com/career"
+  to = "https://theepoh.com/epohtech/programs"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

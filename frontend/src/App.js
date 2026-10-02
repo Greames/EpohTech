@@ -31,6 +31,11 @@ import AdminPage from "@/pages/AdminPage";
 import OpportunitiesPage from "@/pages/OpportunitiesPage";
 import FounderPortalPage from "@/pages/FounderPortalPage";
 
+// theepoh.com is EPOHTECH's domain: unknown paths there (e.g. links to the old
+// site) land on the EPOHTECH home page instead of the Anvaya Partners one.
+const isEpohDomain = () => /(^|\.)theepoh\.com$/.test(window.location.hostname);
+const NotFound = () => (isEpohDomain() ? <Navigate to="/epohtech" replace /> : <HomePage />);
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -72,7 +77,7 @@ function AppRouter() {
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/opportunities" element={<OpportunitiesPage />} />
       <Route path="/my-venture" element={<FounderPortalPage />} />
-      <Route path="*" element={<HomePage />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
