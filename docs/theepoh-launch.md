@@ -1,9 +1,17 @@
 # Launching this site on theepoh.com
 
-theepoh.com currently points to the old "Epoh Tech Solutions" site on another
-host. This site is already deployed on Netlify (project `epohtech`) and
-theepoh.com is attached to that project, but the domain's DNS still points to
-the old host (`2a07:7800::199`). Go-live is a DNS change.
+## Where things are today (checked 2 Oct 2026)
+
+| What | Where |
+|---|---|
+| Domain registration | Zoho (where the domain was bought) |
+| DNS (nameservers) | **SunlightHost**: `ns1`–`ns4.sunlighthost.com` |
+| Old website | SunlightHost: `185.151.30.199` / `2a07:7800::199` |
+| Email | **Zoho Mail** (`mx.zoho.in`) — must keep working |
+| New website | Netlify project `epohtech` — https://epohtech.netlify.app/epohtech |
+
+theepoh.com is already attached to the Netlify project; it just doesn't point
+there yet. Going live means changing DNS.
 
 ## Already done in the code
 
@@ -16,57 +24,72 @@ the old host (`2a07:7800::199`). Go-live is a DNS change.
 - `robots.txt` and `sitemap.xml` point search engines at the EPOHTECH pages.
 - The contact form sends leads to Netlify Forms (form `epoh-enquiry`).
 
-## 1. Before launch
+## Recommended route: move DNS to Netlify
 
-- [ ] Merge the open PR(s) and check https://epohtech.netlify.app/epohtech
-      page by page on desktop and phone.
-- [ ] Netlify → epohtech → **Forms**: `epoh-enquiry` is listed.
-- [ ] **Forms → Form notifications → Add notification → Email**, form
-      `epoh-enquiry`, to the inbox that should receive leads. Send a test
-      enquiry and confirm the email arrives.
-- [ ] Content: Infolob logo, client permission to show names/logos, internship
-      wording, EPOHTECH privacy/terms (the footer currently links to Anvaya's).
-- [ ] Compare the old site's page addresses with the redirect list above and
-      tell the developer about any other pages that need redirecting.
-- [ ] Take a backup/export of the old site from its current host.
+The DNS currently lives with SunlightHost, the old site's host. Moving it to
+Netlify means you only need your **Zoho** and **Netlify** logins, and you can
+cancel SunlightHost afterwards. (If you do have a SunlightHost login, the
+alternative is to edit the A/AAAA records there instead — see the end.)
 
-## 2. One day before
+### 1. Before launch
 
-- [ ] At the DNS provider, **write down the current records** for `theepoh.com`
-      and `www` (A, AAAA, CNAME). These are the rollback values.
-- [ ] Lower the TTL on those records to 300 seconds (5 minutes) so the switch
-      and any rollback take effect quickly.
+- [ ] Review https://epohtech.netlify.app/epohtech on desktop and phone.
+- [ ] Netlify → epohtech → **Forms → Form notifications → Add notification →
+      Email**, form `epoh-enquiry`, to the inbox that should get leads. Send a
+      test enquiry and confirm the email arrives.
+- [ ] Content: Infolob logo, client permission to show names/logos, EPOHTECH
+      privacy/terms (the footer currently links to Anvaya's).
+- [ ] If you want a copy of the old site, ask SunlightHost for a backup now.
 
-## 3. Launch (DNS change)
+### 2. Set up the domain in Netlify DNS (nothing changes for visitors yet)
 
-In Netlify → epohtech → **Domain management**, confirm `theepoh.com` and
-`www.theepoh.com` are both listed, and use the exact values Netlify shows.
-Typically:
+1. Netlify → **Domains** (team level) → **Add or register domain** →
+   `theepoh.com` → choose to use **Netlify DNS**.
+2. Netlify shows **four nameservers** (like `dns1.p0X.nsone.net`). Note them.
+3. In the new DNS zone, **add the email records exactly as below** before
+   switching. Without them, `assist@theepoh.com` stops receiving mail.
 
-| Record | Host | Value |
-|---|---|---|
-| A | `@` (theepoh.com) | `75.2.60.5` |
-| CNAME | `www` | `epohtech.netlify.app` |
+| Type | Name | Value | Priority |
+|---|---|---|---|
+| MX | `@` | `mx.zoho.in` | 10 |
+| MX | `@` | `mx2.zoho.in` | 20 |
+| MX | `@` | `mx3.zoho.in` | 50 |
+| TXT | `@` | `v=spf1 include:zohomail.in -all` | |
+| TXT | `@` | `google-site-verification=E7PvW-bsI82yyxvJFBq_5K06rJZ93kRdPSZUoeg9pds` | |
+| TXT | `zoho._domainkey` | `v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQClSozszdHn1USfvapMNOEXEcTAKB+dOQ7OKe1JK/p8h8xMcbTY67ymq2eZZBQo/gWp6PhgfAjdS/Owjosj2R2jnz5qpnIqQ8cm6P4WZqfjo/onc2Acl5trnlwUWclF9o/JmtOg22ijfaWOSlRB2xD5amfz3SY7vwJWMU9IKX5cDwIDAQAB` | |
 
-- [ ] Delete the old **AAAA** record for `@` (`2a07:7800::199`) and any old A
-      records, or some visitors will still reach the old site.
-- [ ] **Do not change MX, TXT (SPF/DKIM/DMARC) or other mail records** —
-      `assist@theepoh.com` must keep working.
-- [ ] Netlify issues the HTTPS certificate automatically once DNS resolves
-      (Domain management → HTTPS). Wait until it shows as active.
+   Netlify adds the website records (`theepoh.com`, `www`) for the epohtech
+   project by itself. The old `ftp`, `cpanel` and `webmail` names belong to the
+   old host and are not needed.
 
-## 4. After launch
+### 3. Launch: change the nameservers at Zoho
 
-- [ ] Open https://theepoh.com and https://www.theepoh.com — both should land on
-      the EPOHTECH home page over HTTPS.
-- [ ] Try an old link such as https://theepoh.com/about-us.
-- [ ] Submit the contact form once and confirm the lead email.
-- [ ] Send a test email to and from `assist@theepoh.com`.
-- [ ] Google Search Console: verify theepoh.com and submit
-      `https://theepoh.com/sitemap.xml`.
-- [ ] After a week with no issues, raise the DNS TTL back (e.g. 3600).
+- [ ] Log in to Zoho where the domain is managed (Zoho Domains, or the Zoho
+      Mail admin console → Domains). Open `theepoh.com` → **Nameservers** →
+      replace the four `sunlighthost.com` entries with Netlify's four.
+- [ ] Wait. Most visitors switch within a few hours; it can take up to 48.
+      Netlify issues the HTTPS certificate automatically once it sees the
+      change (Domain management → HTTPS).
 
-## Rollback
+### 4. After launch
 
-Put back the A/AAAA/CNAME values written down in step 2. With a 300-second TTL,
-most visitors are back on the old site within minutes.
+- [ ] https://theepoh.com and https://www.theepoh.com land on EPOHTECH over HTTPS.
+- [ ] An old link such as https://theepoh.com/about-us goes to the new About page.
+- [ ] Submit the contact form; the lead email arrives.
+- [ ] Send a test email to **and** from `assist@theepoh.com`.
+- [ ] Google Search Console: submit `https://theepoh.com/sitemap.xml`.
+- [ ] After a couple of weeks with no issues, cancel the SunlightHost plan
+      (keep email on Zoho — that's separate).
+
+### Rollback
+
+At Zoho, put the nameservers back to `ns1`–`ns4.sunlighthost.com`. Visitors
+return to the old site as the change spreads (hours, not minutes).
+
+## Alternative: keep DNS at SunlightHost
+
+Only if you can log in to SunlightHost's control panel (StackCP/cPanel):
+in its DNS editor change `theepoh.com` and `www` to Netlify — A `@` →
+`75.2.60.5`, CNAME `www` → `epohtech.netlify.app` — and delete the AAAA
+records (`2a07:7800::199`) and any wildcard `*` record. Leave MX and TXT
+records alone. Rollback is putting the old values back.

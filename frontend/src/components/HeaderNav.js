@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowUpRight, LogOut } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 
 const LINKS = [
   { label: "Home", path: "/" },
@@ -16,16 +15,9 @@ const LINKS = [
   { label: "Contact", path: "/contact" },
 ];
 
-const GoogleMark = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
-    <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.25 1.3-1.66 3.8-5.5 3.8-3.3 0-6-2.75-6-6.1s2.7-6.1 6-6.1c1.9 0 3.16.8 3.9 1.5l2.65-2.55C16.9 3.1 14.7 2 12 2 6.9 2 2.75 6.15 2.75 11.8S6.9 21.6 12 21.6c5.8 0 9.25-4.05 9.25-9.75 0-.66-.07-1.15-.16-1.65H12z"/>
-  </svg>
-);
-
 export default function HeaderNav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const { user, login, logout } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -72,40 +64,6 @@ export default function HeaderNav() {
         </nav>
 
         <div className="flex items-center gap-3 shrink-0">
-          {user ? (
-            <div className="hidden sm:flex items-center gap-3">
-              <Link
-                to="/account"
-                data-testid="nav-account-link"
-                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 pl-1 pr-3 py-1 hover:border-champagne/40 transition-colors duration-300"
-              >
-                {user.picture ? (
-                  <img src={user.picture} alt="" className="h-7 w-7 rounded-full" referrerPolicy="no-referrer" />
-                ) : (
-                  <span className="h-7 w-7 rounded-full bg-champagne/20 text-champagne flex items-center justify-center text-xs font-bold">
-                    {(user.name || "A")[0]}
-                  </span>
-                )}
-                <span className="text-xs text-gray-300 max-w-[110px] truncate">{user.name || user.email}</span>
-              </Link>
-              <button
-                onClick={logout}
-                data-testid="nav-logout-button"
-                className="text-gray-500 hover:text-white transition-colors duration-300"
-                aria-label="Log out"
-              >
-                <LogOut size={16} />
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={login}
-              data-testid="nav-google-signin-button"
-              className="hidden sm:flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs font-medium text-gray-200 hover:border-champagne/50 hover:text-white transition-colors duration-300"
-            >
-              <GoogleMark /> Sign in
-            </button>
-          )}
           <Link
             to="/founders"
             data-testid="nav-cta-apply"
@@ -153,15 +111,6 @@ export default function HeaderNav() {
                   </NavLink>
                 </motion.div>
               ))}
-              {!user && (
-                <button
-                  onClick={login}
-                  data-testid="nav-mobile-google-signin-button"
-                  className="mt-2 flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-3 text-sm font-medium text-gray-200"
-                >
-                  <GoogleMark /> Sign in with Google
-                </button>
-              )}
             </div>
           </motion.div>
         )}

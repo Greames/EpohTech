@@ -3,8 +3,6 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Lenis from "lenis";
 import { Toaster } from "sonner";
-import { AuthProvider } from "@/context/AuthContext";
-import AuthCallback from "@/components/AuthCallback";
 import HeaderNav from "@/components/HeaderNav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -26,10 +24,6 @@ import EpohServicesPage from "@/pages/EpohServicesPage";
 import EpohProgramsPage from "@/pages/EpohProgramsPage";
 import EpohAboutPage from "@/pages/EpohAboutPage";
 import EpohContactPage from "@/pages/EpohContactPage";
-import AccountPage from "@/pages/AccountPage";
-import AdminPage from "@/pages/AdminPage";
-import OpportunitiesPage from "@/pages/OpportunitiesPage";
-import FounderPortalPage from "@/pages/FounderPortalPage";
 
 // theepoh.com is EPOHTECH's domain: unknown paths there (e.g. links to the old
 // site) land on the EPOHTECH home page instead of the Anvaya Partners one.
@@ -45,11 +39,6 @@ const ScrollToTop = () => {
 };
 
 function AppRouter() {
-  const location = useLocation();
-  // Detect session_id synchronously during render to avoid auth race conditions
-  if (location.hash?.includes("session_id=")) {
-    return <AuthCallback />;
-  }
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -73,10 +62,10 @@ function AppRouter() {
         <Route path="about" element={<EpohAboutPage />} />
         <Route path="contact" element={<EpohContactPage />} />
       </Route>
-      <Route path="/account" element={<AccountPage />} />
-      <Route path="/admin" element={<AdminPage />} />
-      <Route path="/opportunities" element={<OpportunitiesPage />} />
-      <Route path="/my-venture" element={<FounderPortalPage />} />
+      {/* Former sign-in-only pages; sign-in has been removed. */}
+      {["/account", "/admin", "/opportunities", "/my-venture"].map((path) => (
+        <Route key={path} path={path} element={<Navigate to="/" replace />} />
+      ))}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -115,12 +104,10 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <AuthProvider>
-          <ScrollToTop />
-          <div className="grain-overlay" aria-hidden="true" />
-          <SiteChrome />
-          <Toaster theme="dark" position="top-center" richColors />
-        </AuthProvider>
+        <ScrollToTop />
+        <div className="grain-overlay" aria-hidden="true" />
+        <SiteChrome />
+        <Toaster theme="dark" position="top-center" richColors />
       </BrowserRouter>
     </div>
   );
