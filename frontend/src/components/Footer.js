@@ -127,7 +127,6 @@ export default function Footer() {
                 { label: "Privacy Policy", path: "/privacy" },
                 { label: "Terms of Use", path: "/terms" },
                 { label: "Disclaimer", path: "/disclaimer" },
-                { label: "Account", path: "/account" },
               ]}
             />
           </div>
