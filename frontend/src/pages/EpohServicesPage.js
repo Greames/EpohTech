@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Database, LineChart, Layers, Compass, Code2, Workflow, BarChart3, Factory } from "lucide-react";
 import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
+import EpohConsulting from "@/components/EpohConsulting";
 
 const SERVICES = [
   {
@@ -76,6 +77,8 @@ export default function EpohServicesPage() {
           ))}
         </div>
 
+        <EpohConsulting />
+
         <div className="mt-28">
           <Reveal>
             <Eyebrow>Solutions</Eyebrow>
@@ -114,7 +117,7 @@ export default function EpohServicesPage() {
               data-testid="epoh-services-cta-button"
               className="group inline-flex items-center gap-2 rounded-full bg-champagne text-obsidian font-bold tracking-wide px-9 py-4 text-sm hover:bg-champagneBright transition-colors duration-300 shrink-0 self-start lg:self-center"
             >
-              START A CONVERSATION <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              BOOK A CONSULTATION <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
         </Reveal>

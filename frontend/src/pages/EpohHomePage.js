@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Database, LineChart, Layers, Compass, Code2, Workflow, BarChart3, Factory } from "lucide-react";
 import { Reveal, Eyebrow, MaskedLine } from "@/components/Reveal";
+import EpohConsulting, { CONSULTING_CLIENTS, ClientMark } from "@/components/EpohConsulting";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHx0ZWNoJTIwc29mdHdhcmUlMjBlbmdpbmVlciUyMGNvZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85";
 const PROGRAMS_IMG = "https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwyfHx0ZWNoJTIwc29mdHdhcmUlMjBlbmdpbmVlciUyMGNvZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3ODk5ODMxNzl8MA&ixlib=rb-4.1.0&q=85";
@@ -47,7 +48,7 @@ export default function EpohHomePage() {
               data-testid="epoh-hero-contact-button"
               className="inline-flex items-center gap-2 rounded-full border border-champagne/50 text-champagne font-bold tracking-wide px-8 py-3.5 text-sm hover:bg-champagne hover:text-obsidian transition-colors duration-300"
             >
-              START A CONVERSATION
+              BOOK A CONSULTATION
             </Link>
           </div>
         </Reveal>
@@ -56,9 +57,14 @@ export default function EpohHomePage() {
         <Reveal className="mt-20">
           <div data-testid="epoh-clients-strip" className="border-y border-white/5 py-10">
             <p className="text-center font-mono text-[10px] uppercase tracking-[0.35em] text-gray-600">
-              Running technology for
+              Trusted by teams in India &amp; the US
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-14 gap-y-4">
+            <div className="mt-6 mx-auto max-w-3xl grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              {CONSULTING_CLIENTS.map((c) => (
+                <ClientMark key={c.name} client={c} />
+              ))}
+            </div>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
               <span data-testid="epoh-client-dawn-fresh" className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">Dawn Fresh</span>
               <span data-testid="epoh-client-volt-valve" className="font-extrabold tracking-tight text-xl sm:text-2xl text-gray-400 hover:text-champagne transition-colors duration-500">Volt &amp; Valve</span>
               <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-gray-600">+ every Anvaya Partners company</span>
@@ -100,6 +106,9 @@ export default function EpohHomePage() {
             ))}
           </div>
         </div>
+
+        {/* Consulting */}
+        <EpohConsulting />
 
         {/* Story band */}
         <div className="mt-28 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
@@ -163,28 +172,28 @@ export default function EpohHomePage() {
         {/* Programs band */}
         <div className="mt-28 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <Reveal className="order-2 lg:order-1">
-            <Eyebrow>Programs</Eyebrow>
+            <Eyebrow>Internship Program</Eyebrow>
             <h2 className="mt-6 text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-[1.05]">
-              Learn from the people <span className="text-champagne">who ship it.</span>
+              Top of your class? <span className="text-champagne">Come build with us.</span>
             </h2>
             <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed max-w-lg">
-              Practitioner-led training in Big Data Engineering and Oracle Fusion with OIC —
-              taught by the engineers who run these systems in production.
+              Exceptional academics — top 5 in your class — and excellent communication skills?
+              Join our internship program and learn alongside the engineers who run real systems.
             </p>
             <Link
               to="/epohtech/programs"
               data-testid="epoh-home-programs-link"
               className="group mt-8 inline-flex items-center gap-2 rounded-full bg-champagne text-obsidian font-bold tracking-wide px-8 py-3.5 text-sm hover:bg-champagneBright transition-colors duration-300"
             >
-              VIEW PROGRAMS <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              EXPLORE THE INTERNSHIP <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </Reveal>
           <Reveal delay={0.12} className="order-1 lg:order-2">
             <div className="relative rounded-3xl overflow-hidden border border-white/10">
-              <img src={PROGRAMS_IMG} alt="Epoh Tech training programs" className="w-full h-[320px] sm:h-[420px] object-cover" loading="lazy" />
+              <img src={PROGRAMS_IMG} alt="Epoh Tech internship program" className="w-full h-[320px] sm:h-[420px] object-cover" loading="lazy" />
               <div className="absolute inset-0 bg-obsidian/40" />
               <p className="absolute bottom-5 left-6 font-mono text-[10px] uppercase tracking-[0.3em] text-champagne">
-                Practitioner-led training
+                Internship program
               </p>
             </div>
           </Reveal>
@@ -204,7 +213,7 @@ export default function EpohHomePage() {
               data-testid="epoh-home-cta-button"
               className="group mt-8 inline-flex items-center gap-2 rounded-full bg-champagne text-obsidian font-bold tracking-wide px-9 py-4 text-sm hover:bg-champagneBright transition-colors duration-300"
             >
-              START A CONVERSATION <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              BOOK A CONSULTATION <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
         </Reveal>
