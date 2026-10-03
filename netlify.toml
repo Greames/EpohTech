@@ -11,15 +11,29 @@
   GENERATE_SOURCEMAP = "false"
 
 # theepoh.com opens on the EPOHTECH home page; other domains keep Anvaya at /.
+# Listed for http and https: before the HTTPS certificate exists (or on an old
+# http link) visitors arrive over http, which the https rules alone don't match.
 [[redirects]]
   from = "https://theepoh.com/"
-  to = "https://theepoh.com/epohtech"
+  to = "/epohtech"
   status = 302
   force = true
 
 [[redirects]]
   from = "https://www.theepoh.com/"
-  to = "https://theepoh.com/epohtech"
+  to = "/epohtech"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "http://theepoh.com/"
+  to = "/epohtech"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "http://www.theepoh.com/"
+  to = "/epohtech"
   status = 302
   force = true
 
@@ -28,85 +42,169 @@
 # site's menu (About Us, Our Services, Our Solutions, Contact Us, Careers).
 [[redirects]]
   from = "https://theepoh.com/about-us"
-  to = "https://theepoh.com/epohtech/about"
+  to = "/epohtech/about"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://www.theepoh.com/about-us"
-  to = "https://theepoh.com/epohtech/about"
+  to = "/epohtech/about"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://theepoh.com/our-services"
-  to = "https://theepoh.com/epohtech/services"
+  to = "/epohtech/services"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://www.theepoh.com/our-services"
-  to = "https://theepoh.com/epohtech/services"
+  to = "/epohtech/services"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://theepoh.com/our-solutions"
-  to = "https://theepoh.com/epohtech/services"
+  to = "/epohtech/services"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://www.theepoh.com/our-solutions"
-  to = "https://theepoh.com/epohtech/services"
+  to = "/epohtech/services"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://theepoh.com/solutions"
-  to = "https://theepoh.com/epohtech/services"
+  to = "/epohtech/services"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://www.theepoh.com/solutions"
-  to = "https://theepoh.com/epohtech/services"
+  to = "/epohtech/services"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://theepoh.com/contact-us"
-  to = "https://theepoh.com/epohtech/contact"
+  to = "/epohtech/contact"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://www.theepoh.com/contact-us"
-  to = "https://theepoh.com/epohtech/contact"
+  to = "/epohtech/contact"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://theepoh.com/careers"
-  to = "https://theepoh.com/epohtech/programs"
+  to = "/epohtech/programs"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://www.theepoh.com/careers"
-  to = "https://theepoh.com/epohtech/programs"
+  to = "/epohtech/programs"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://theepoh.com/career"
-  to = "https://theepoh.com/epohtech/programs"
+  to = "/epohtech/programs"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://www.theepoh.com/career"
-  to = "https://theepoh.com/epohtech/programs"
+  to = "/epohtech/programs"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://theepoh.com/about-us"
+  to = "/epohtech/about"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.theepoh.com/about-us"
+  to = "/epohtech/about"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://theepoh.com/our-services"
+  to = "/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.theepoh.com/our-services"
+  to = "/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://theepoh.com/our-solutions"
+  to = "/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.theepoh.com/our-solutions"
+  to = "/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://theepoh.com/solutions"
+  to = "/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.theepoh.com/solutions"
+  to = "/epohtech/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://theepoh.com/contact-us"
+  to = "/epohtech/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.theepoh.com/contact-us"
+  to = "/epohtech/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://theepoh.com/careers"
+  to = "/epohtech/programs"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.theepoh.com/careers"
+  to = "/epohtech/programs"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://theepoh.com/career"
+  to = "/epohtech/programs"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.theepoh.com/career"
+  to = "/epohtech/programs"
   status = 301
   force = true
 
