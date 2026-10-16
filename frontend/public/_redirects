@@ -1,0 +1,21 @@
+# Cloudflare Pages redirects. This site is served on theepoh.com, so the root
+# opens the EPOHTECH home page. Unknown paths fall back to index.html
+# automatically (Pages SPA mode), which also handles the in-app routes.
+/                 /epohtech            302
+
+# Old theepoh.com pages (previous site) -> their EPOHTECH equivalents, so
+# existing links and search results keep working.
+/about-us         /epohtech/about      301
+/about-us/        /epohtech/about      301
+/our-services     /epohtech/services   301
+/our-services/    /epohtech/services   301
+/our-solutions    /epohtech/services   301
+/our-solutions/   /epohtech/services   301
+/solutions        /epohtech/services   301
+/solutions/       /epohtech/services   301
+/contact-us       /epohtech/contact    301
+/contact-us/      /epohtech/contact    301
+/careers          /epohtech/programs   301
+/careers/         /epohtech/programs   301
+/career           /epohtech/programs   301
+/career/          /epohtech/programs   301

@@ -9,6 +9,8 @@ const inputCls =
   "w-full rounded-xl border border-white/10 bg-obsidian/70 px-4 py-3.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-champagne/60 focus:ring-1 focus:ring-champagne/30 transition-colors duration-300";
 const labelCls = "block font-mono text-[10px] uppercase tracking-[0.25em] text-gray-500 mb-2";
 
+const WEB3FORMS_KEY = process.env.REACT_APP_WEB3FORMS_KEY;
+
 const INTERESTS = [
   "General Enquiry",
   "Data Engineering",
@@ -39,21 +41,29 @@ export default function EpohContactPage() {
 
   const submit = async (e) => {
     e.preventDefault();
+    // Hidden field only bots fill in; pretend success so they don't retry.
+    if (e.target.elements.botcheck.value) {
+      setDone(true);
+      return;
+    }
     setLoading(true);
     try {
-      // Netlify Forms stores the lead and emails it to the configured recipients.
-      const body = new URLSearchParams({
-        "form-name": "epoh-enquiry",
-        "bot-field": e.target.elements["bot-field"].value,
-        ...form,
-        consent: consent ? "yes" : "no",
-      });
-      const res = await fetch("/enquiry-received.html", {
+      // Web3Forms emails each enquiry to the address its access key was created for.
+      if (!WEB3FORMS_KEY) throw new Error("REACT_APP_WEB3FORMS_KEY is not set");
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `New EPOHTECH enquiry: ${form.interest}`,
+          from_name: "theepoh.com",
+          replyto: form.email,
+          ...form,
+          consent: consent ? "yes" : "no",
+        }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) throw new Error(data.message || `HTTP ${res.status}`);
       setDone(true);
       toast.success("Enquiry sent — we'll be in touch.");
     } catch {
@@ -115,13 +125,12 @@ export default function EpohContactPage() {
               </motion.div>
             ) : (
               <form
-                name="epoh-enquiry"
                 onSubmit={submit}
                 data-testid="epoh-contact-form"
                 className="rounded-3xl border border-white/10 bg-charcoal/60 p-8 sm:p-10 space-y-5"
               >
                 <p hidden>
-                  <label>Leave this empty: <input name="bot-field" tabIndex={-1} autoComplete="off" /></label>
+                  <label>Leave this empty: <input name="botcheck" tabIndex={-1} autoComplete="off" /></label>
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
