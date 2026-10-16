@@ -1,95 +1,106 @@
-# Launching this site on theepoh.com
+# Hosting theepoh.com on Cloudflare Pages
 
-## Where things are today (checked 2 Oct 2026)
+The site moved from Netlify (free allowance used up, site paused) to
+Cloudflare Pages. Email stays on **Zoho Mail** throughout.
 
 | What | Where |
 |---|---|
-| Domain registration | Zoho (where the domain was bought) |
-| DNS (nameservers) | **SunlightHost**: `ns1`–`ns4.sunlighthost.com` |
-| Old website | SunlightHost: `185.151.30.199` / `2a07:7800::199` |
-| Email | **Zoho Mail** (`mx.zoho.in`) — must keep working |
-| New website | Netlify project `epohtech` — https://epohtech.netlify.app/epohtech |
+| Domain registration | Zoho (OpenSRS) — Zoho Mail admin → Domains → theepoh.com |
+| Email | Zoho Mail (`mx.zoho.in`) |
+| Website hosting | Cloudflare Pages, built from GitHub `Greames/EpohTech` (`main`) |
+| DNS | Cloudflare (after step 4 below) |
+| Contact-form leads | Web3Forms → emailed to `assist@theepoh.com` |
 
-theepoh.com is already attached to the Netlify project; it just doesn't point
-there yet. Going live means changing DNS.
+## What the code does
 
-## Already done in the code
+- `frontend/public/_redirects`: `/` opens `/epohtech`; old-site URLs
+  (`/about-us`, `/our-services`, `/our-solutions`, `/solutions`, `/contact-us`,
+  `/careers`, `/career`) redirect to their EPOHTECH pages. Unknown paths fall
+  back to the app (Cloudflare Pages SPA mode — there is deliberately no
+  `404.html`).
+- The contact form posts to Web3Forms using the build variable
+  `REACT_APP_WEB3FORMS_KEY`. Without it the form shows "Could not send. Please
+  email assist@theepoh.com".
+- `frontend/.node-version` pins Node 22 for the build.
 
-- Netlify builds `frontend/` and serves it as a single-page app (`netlify.toml`).
-- On theepoh.com, `/` redirects to the EPOHTECH home page (`/epohtech`).
-- Old-site URLs redirect to their new pages: `/about-us`, `/our-services`,
-  `/our-solutions`, `/solutions`, `/contact-us`, `/careers`, `/career`.
-  Any other unknown path on theepoh.com lands on the EPOHTECH home page.
-- EPOHTECH pages set their own browser titles and description.
-- `robots.txt` and `sitemap.xml` point search engines at the EPOHTECH pages.
-- The contact form sends leads to Netlify Forms (form `epoh-enquiry`).
+## 1. Get a Web3Forms key (2 minutes)
 
-## Recommended route: move DNS to Netlify
+1. Open https://web3forms.com and enter **assist@theepoh.com** under "Create
+   your access key".
+2. Open the email Web3Forms sends to that inbox and copy the **access key**.
+   (It is safe to use in a public website; it only lets people send *to* you.)
 
-The DNS currently lives with SunlightHost, the old site's host. Moving it to
-Netlify means you only need your **Zoho** and **Netlify** logins, and you can
-cancel SunlightHost afterwards. (If you do have a SunlightHost login, the
-alternative is to edit the A/AAAA records there instead — see the end.)
+## 2. Create the Cloudflare Pages project
 
-### 1. Before launch
+1. Sign up / log in at https://dash.cloudflare.com (free plan).
+2. **Workers & Pages → Create → Pages → Connect to Git**, authorise GitHub and
+   pick **Greames/EpohTech**.
+3. Build settings:
 
-- [ ] Review https://epohtech.netlify.app/epohtech on desktop and phone.
-- [ ] Netlify → epohtech → **Forms → Form notifications → Add notification →
-      Email**, form `epoh-enquiry`, to the inbox that should get leads. Send a
-      test enquiry and confirm the email arrives.
-- [ ] Content: Infolob logo, client permission to show names/logos, EPOHTECH
-      privacy/terms (the footer currently links to Anvaya's).
-- [ ] If you want a copy of the old site, ask SunlightHost for a backup now.
+| Setting | Value |
+|---|---|
+| Production branch | `main` |
+| Framework preset | `Create React App` (or None) |
+| Build command | `yarn build` |
+| Build output directory | `build` |
+| Root directory (advanced) | `frontend` |
+| Environment variable | `REACT_APP_WEB3FORMS_KEY` = the key from step 1 |
 
-### 2. Set up the domain in Netlify DNS (nothing changes for visitors yet)
+4. **Save and Deploy**. When it finishes you get a test address like
+   `https://epohtech.pages.dev`. Open it: it should go straight to the
+   EPOHTECH home page. Submit one test enquiry and check that the email
+   arrives at assist@theepoh.com.
 
-1. Netlify → **Domains** (team level) → **Add or register domain** →
-   `theepoh.com` → choose to use **Netlify DNS**.
-2. Netlify shows **four nameservers** (like `dns1.p0X.nsone.net`). Note them.
-3. In the new DNS zone, **add the email records exactly as below** before
-   switching. Without them, `assist@theepoh.com` stops receiving mail.
+## 3. Add theepoh.com to Cloudflare (DNS)
 
-| Type | Name | Value | Priority |
-|---|---|---|---|
-| MX | `@` | `mx.zoho.in` | 10 |
-| MX | `@` | `mx2.zoho.in` | 20 |
-| MX | `@` | `mx3.zoho.in` | 50 |
-| TXT | `@` | `v=spf1 include:zohomail.in -all` | |
-| TXT | `@` | `google-site-verification=E7PvW-bsI82yyxvJFBq_5K06rJZ93kRdPSZUoeg9pds` | |
-| TXT | `zoho._domainkey` | `v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQClSozszdHn1USfvapMNOEXEcTAKB+dOQ7OKe1JK/p8h8xMcbTY67ymq2eZZBQo/gWp6PhgfAjdS/Owjosj2R2jnz5qpnIqQ8cm6P4WZqfjo/onc2Acl5trnlwUWclF9o/JmtOg22ijfaWOSlRB2xD5amfz3SY7vwJWMU9IKX5cDwIDAQAB` | |
+1. Cloudflare dashboard → **Add a domain** → `theepoh.com` → **Free** plan.
+2. Cloudflare scans the existing records. On the review screen make sure
+   these exist (add any that are missing, exactly):
 
-   Netlify adds the website records (`theepoh.com`, `www`) for the epohtech
-   project by itself. The old `ftp`, `cpanel` and `webmail` names belong to the
-   old host and are not needed.
+| Type | Name | Value | Priority | Proxy |
+|---|---|---|---|---|
+| MX | `@` | `mx.zoho.in` | 10 | — |
+| MX | `@` | `mx2.zoho.in` | 20 | — |
+| MX | `@` | `mx3.zoho.in` | 50 | — |
+| TXT | `@` | `v=spf1 include:zohomail.in -all` | | — |
+| TXT | `@` | `google-site-verification=E7PvW-bsI82yyxvJFBq_5K06rJZ93kRdPSZUoeg9pds` | | — |
+| TXT | `zoho._domainkey` | `v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQClSozszdHn1USfvapMNOEXEcTAKB+dOQ7OKe1JK/p8h8xMcbTY67ymq2eZZBQo/gWp6PhgfAjdS/Owjosj2R2jnz5qpnIqQ8cm6P4WZqfjo/onc2Acl5trnlwUWclF9o/JmtOg22ijfaWOSlRB2xD5amfz3SY7vwJWMU9IKX5cDwIDAQAB` | | — |
 
-### 3. Launch: change the nameservers at Zoho
+3. **Delete** any scanned `A`, `AAAA` or `CNAME` records for `theepoh.com` /
+   `www` (they point at Netlify). Step 5 recreates the right ones.
+4. Continue. Cloudflare shows **two nameservers** (like `xxx.ns.cloudflare.com`).
 
-- [ ] Log in to Zoho where the domain is managed (Zoho Domains, or the Zoho
-      Mail admin console → Domains). Open `theepoh.com` → **Nameservers** →
-      replace the four `sunlighthost.com` entries with Netlify's four.
-- [ ] Wait. Most visitors switch within a few hours; it can take up to 48.
-      Netlify issues the HTTPS certificate automatically once it sees the
-      change (Domain management → HTTPS).
+## 4. Point the domain at Cloudflare (Zoho)
 
-### 4. After launch
+1. Zoho Mail admin → Domains → theepoh.com → **Manage Your Domain** →
+   **Name Servers/DNS → Manage Name Servers**.
+2. Replace the four `dnsX.p07.nsone.net` (Netlify) entries with Cloudflare's
+   two nameservers. Save.
+3. Cloudflare emails you when the domain is **Active** (minutes to a few hours).
 
-- [ ] https://theepoh.com and https://www.theepoh.com land on EPOHTECH over HTTPS.
-- [ ] An old link such as https://theepoh.com/about-us goes to the new About page.
-- [ ] Submit the contact form; the lead email arrives.
-- [ ] Send a test email to **and** from `assist@theepoh.com`.
-- [ ] Google Search Console: submit `https://theepoh.com/sitemap.xml`.
-- [ ] After a couple of weeks with no issues, cancel the SunlightHost plan
-      (keep email on Zoho — that's separate).
+## 5. Connect the domain to the Pages project
 
-### Rollback
+1. Workers & Pages → your project → **Custom domains → Set up a custom domain**
+   → `theepoh.com` → Activate. Repeat for `www.theepoh.com`.
+2. Cloudflare creates the DNS records and the HTTPS certificate itself; this
+   usually takes a few minutes once the domain is Active.
 
-At Zoho, put the nameservers back to `ns1`–`ns4.sunlighthost.com`. Visitors
-return to the old site as the change spreads (hours, not minutes).
+## 6. Check
 
-## Alternative: keep DNS at SunlightHost
+- [ ] https://theepoh.com and https://www.theepoh.com open EPOHTECH with a padlock
+      (try a private/incognito window).
+- [ ] https://theepoh.com/about-us goes to the new About page.
+- [ ] A contact-form enquiry arrives by email at assist@theepoh.com.
+- [ ] Email to **and** from assist@theepoh.com still works.
 
-Only if you can log in to SunlightHost's control panel (StackCP/cPanel):
-in its DNS editor change `theepoh.com` and `www` to Netlify — A `@` →
-`75.2.60.5`, CNAME `www` → `epohtech.netlify.app` — and delete the AAAA
-records (`2a07:7800::199`) and any wildcard `*` record. Leave MX and TXT
-records alone. Rollback is putting the old values back.
+## 7. Clean up Netlify
+
+Once everything above works, delete the old Netlify project `epohtech`
+(Project configuration → Danger zone) and the DNS zone under Netlify
+**Domains → theepoh.com**, so nothing points at it any more.
+
+## Rollback
+
+Before step 4 nothing visitors see has changed. After step 4, putting the
+Netlify nameservers (`dns1`–`dns4.p07.nsone.net`) back in Zoho reverses the
+switch — but Netlify stays paused until its allowance resets or you upgrade.

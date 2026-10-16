@@ -30,7 +30,7 @@ import EpohContactPage from "@/pages/EpohContactPage";
 const isEpohDomain = () => /(^|\.)theepoh\.com$/.test(window.location.hostname);
 const NotFound = () => (isEpohDomain() ? <Navigate to="/epohtech" replace /> : <HomePage />);
 
-// Fallback for netlify.toml's root redirect: someone landing on theepoh.com/
+// Fallback for the root redirect in public/_redirects: someone landing on theepoh.com/
 // gets the EPOHTECH home page. Only checked once at load, so the in-app
 // "Anvaya Partners" links (to /) still open the Anvaya pages.
 if (isEpohDomain() && window.location.pathname === "/") {
